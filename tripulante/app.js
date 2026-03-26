@@ -1,5 +1,5 @@
 // ==================== CONFIGURACIÓN ====================
-const SCRIPT_URL = "https://script.google.com/macros/s/TU_DEPLOY_ID/exec"; // ← CAMBIA ESTO
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBOeuYTpC2bEwdG2Dn8ktsB1lPdghiCczFLAWQCGG9mtm2xfpe0AeoroG4QbzYJzyxBw/exec"; // ← CAMBIA ESTO
 
 let currentUser = null;
 let currentFileBase64 = null;
@@ -18,17 +18,32 @@ function showToast(message, type = "success") {
 
 async function callBackend(action, params = {}) {
   try {
+    const payload = { action, ...params };
+    
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action, ...params })
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",   // ← Cambia a esto
+      },
+      body: new URLSearchParams({ payload: JSON.stringify(payload) })
     });
     
-    const result = await response.json();
-    if (result.status === "error") throw new Error(result.message);
-    return result.data;
+    const text = await response.text();
+    // Apps Script a veces devuelve HTML de redirección
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (e) {
+      // Si falla, intenta extraer el JSON (raro pero pasa)
+      const match = text.match(/\{.*\}/s);
+      result = match ? JSON.parse(match[0]) : { status: "error", message: text };
+    }
+
+    if (result.status === "error") throw new Error(result.message || "Error desconocido");
+    return result.data || result;
   } catch (error) {
-    showToast(error.message, "error");
+    console.error(error);
+    showToast(error.message || "Error de conexión", "error");
     throw error;
   }
 }
@@ -61,6 +76,12 @@ async function login() {
   } catch (e) {
     // Error ya mostrado por callBackend
   }
+}
+
+if (userData.rol !== "TRIPULANTE") {
+  showToast("Esta app es solo para Tripulantes", "error");
+  logout();
+  return;
 }
 
 // ==================== DASHBOARD ====================
