@@ -221,20 +221,47 @@ function showToast(msg, type = "success") {
   setTimeout(() => t.classList.add("hidden"), 3500);
 }
 
-async function callBackend(action, payload) {
+async function callBackend(action, payload = {}) {
   try {
+    const fullPayload = { action, ...payload };
+
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({ payload: JSON.stringify({ action, ...payload }) })
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        payload: JSON.stringify(fullPayload)
+      })
     });
+
     const text = await response.text();
-    let json = {};
-    try { json = JSON.parse(text); } catch(e) { json = { status: "error", message: text }; }
-    if (json.status === "error") throw new Error(json.message);
-    return json.data || json;
+    
+    // Debug importante - quítalo después de que funcione
+    console.log("Respuesta raw del servidor:", text.substring(0, 500));
+
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (e) {
+      // Si devuelve HTML (error común), intentamos extraer JSON
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        result = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error("El servidor no devolvió JSON válido");
+      }
+    }
+
+    if (result.status === 'error') {
+      throw new Error(result.message || "Error desconocido del servidor");
+    }
+
+    return result.data || result;
+
   } catch (err) {
-    showToast(err.message, "error");
+    console.error("Error en callBackend:", err);
+    showToast(err.message || "Error de conexión con el servidor", "error");
     throw err;
   }
 }
