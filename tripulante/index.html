@@ -10,13 +10,16 @@
     body { font-family: 'Inter', system-ui, sans-serif; }
     .toast { animation: toastIn 0.3s ease forwards; }
     @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .kpi-ring {
+      background: conic-gradient(#10b981 0% var(--progress), #e5e7eb var(--progress) 100%);
+    }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
 <div class="max-w-[480px] mx-auto bg-white min-h-screen shadow-xl overflow-hidden">
 
-  <!-- LOGIN / REGISTER -->
+  <!-- AUTH SCREEN -->
   <div id="authScreen">
     <div class="bg-blue-600 text-white px-6 pt-10 pb-8 text-center">
       <h1 class="text-4xl font-bold">HT-BPDT</h1>
@@ -25,49 +28,176 @@
     </div>
 
     <div class="flex border-b">
-      <button onclick="switchTab(0)" id="tabLogin" class="flex-1 py-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600">Iniciar Sesión</button>
-      <button onclick="switchTab(1)" id="tabRegister" class="flex-1 py-4 text-sm font-semibold text-gray-500">Crear Cuenta</button>
+      <button onclick="switchTab(0)" id="tabLogin"
+              class="flex-1 py-4 text-sm font-semibold border-b-2 border-blue-600 text-blue-600">Iniciar Sesión</button>
+      <button onclick="switchTab(1)" id="tabRegister"
+              class="flex-1 py-4 text-sm font-semibold text-gray-500">Crear Cuenta</button>
     </div>
 
-    <!-- LOGIN FORM -->
+    <!-- LOGIN -->
     <div id="loginForm" class="p-6">
       <div class="space-y-5">
         <div>
           <label class="text-xs font-medium text-gray-500">DNI (8 dígitos)</label>
-          <input id="loginDni" type="text" maxlength="8" inputmode="numeric" class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500" placeholder="16528921">
+          <input id="loginDni" type="text" maxlength="8" inputmode="numeric"
+                 class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
+                 placeholder="16528921">
         </div>
         <div>
           <label class="text-xs font-medium text-gray-500">Contraseña</label>
-          <input id="loginPass" type="password" class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500" placeholder="Últimos 4 dígitos del DNI">
+          <input id="loginPass" type="password"
+                 class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
+                 placeholder="Últimos 4 dígitos del DNI">
         </div>
-        <button onclick="doLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-2xl transition">Ingresar</button>
+        <button onclick="doLogin()" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-2xl transition">
+          Ingresar
+        </button>
       </div>
     </div>
 
-    <!-- REGISTER FORM -->
+    <!-- REGISTER -->
     <div id="registerForm" class="hidden p-6">
-      <!-- Aquí va el formulario de registro (puedes copiar del anterior si quieres) -->
-      <p class="text-center text-gray-500 py-8">Formulario de registro en construcción...</p>
+      <div class="space-y-5">
+        <div>
+          <label class="text-xs font-medium text-gray-500">DNI</label>
+          <input id="regDni" type="text" maxlength="8" inputmode="numeric"
+                 oninput="if(this.value.length===8) checkDniAutoFill()"
+                 class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
+                 placeholder="12345678">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-medium text-gray-500">Nombres</label>
+            <input id="regNames" type="text" class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-500">Apellidos</label>
+            <input id="regApellidos" type="text" class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-gray-500">Empresa</label>
+          <select id="regEmpresa" class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl"></select>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-gray-500">Cargo</label>
+          <select id="regCargo" onchange="toggleBreveteField()" class="w-full mt-1 px-4 py-3 border border-gray-300 rounded-2xl">
+            <option value="AUXILIAR">Auxiliar</option>
+            <option value="CONDUCTOR">Conductor</option>
+          </select>
+        </div>
+
+        <!-- Foto DNI -->
+        <div class="bg-gray-50 p-4 rounded-2xl">
+          <label class="text-xs font-medium text-gray-500 block mb-2">Foto DNI</label>
+          <div onclick="triggerFile('dni')" class="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center cursor-pointer hover:border-blue-400">
+            <i class="fas fa-camera text-3xl text-gray-400"></i>
+            <p class="text-sm text-gray-500 mt-2">Toca para subir foto del DNI</p>
+            <div id="previewDni" class="mt-3 text-xs text-green-600 font-medium hidden">✅ Archivo listo</div>
+          </div>
+          <input type="file" id="fileDni" accept="image/*" class="hidden" onchange="handleFile(this, 'dni')">
+          <input type="date" id="dniVence" class="w-full mt-3 px-4 py-3 border border-gray-300 rounded-2xl text-sm">
+        </div>
+
+        <!-- Foto Brevete -->
+        <div id="breveteGroup" class="hidden bg-amber-50 p-4 rounded-2xl">
+          <label class="text-xs font-medium text-gray-500 block mb-2">Foto Licencia (Brevete)</label>
+          <div onclick="triggerFile('brevete')" class="border-2 border-dashed border-amber-300 rounded-2xl p-6 text-center cursor-pointer hover:border-amber-400">
+            <i class="fas fa-id-card text-3xl text-amber-400"></i>
+            <p class="text-sm text-amber-600 mt-2">Toca para subir foto del brevete</p>
+            <div id="previewBrevete" class="mt-3 text-xs text-green-600 font-medium hidden">✅ Archivo listo</div>
+          </div>
+          <input type="file" id="fileBrevete" accept="image/*" class="hidden" onchange="handleFile(this, 'brevete')">
+          <input type="date" id="breveteVence" class="w-full mt-3 px-4 py-3 border border-gray-300 rounded-2xl text-sm">
+        </div>
+
+        <button onclick="doRegister()" id="btnRegister"
+                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-2xl transition">
+          Crear Cuenta
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- DASHBOARD -->
   <div id="dashScreen" class="hidden flex flex-col min-h-screen">
-    <div class="bg-blue-600 text-white p-6">
-      <div class="flex justify-between">
+    <div class="bg-blue-600 text-white px-6 py-6">
+      <div class="flex justify-between items-start">
         <div>
           <h2 id="dashNombre" class="text-2xl font-semibold"></h2>
           <p id="dashCargo" class="text-blue-100"></p>
+          <p id="dashEmpresa" class="text-xs bg-white/20 inline-block px-3 py-1 rounded-full mt-2"></p>
         </div>
-        <button onclick="logout()" class="text-white/80"><i class="fas fa-sign-out-alt text-2xl"></i></button>
+        <button onclick="logout()" class="text-white/80 hover:text-white">
+          <i class="fas fa-sign-out-alt text-2xl"></i>
+        </button>
       </div>
     </div>
 
-    <div class="p-6">
-      <div id="docsList" class="space-y-3"></div>
+    <div class="flex-1 p-6 space-y-8">
+      <div class="flex justify-center">
+        <div id="kpiRing" class="kpi-ring w-40 h-40 rounded-full flex items-center justify-center relative border-8 border-white shadow-inner"
+             style="--progress: 0%;">
+          <div class="text-center">
+            <div id="kpiValue" class="text-6xl font-bold text-gray-800">0%</div>
+            <div class="text-xs tracking-widest text-gray-500 -mt-1">CUMPLIMIENTO</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-baseline mb-4">
+          <h3 class="font-semibold text-lg">Mis Documentos</h3>
+          <button onclick="loadMisPendientes()" class="text-blue-600 text-sm flex items-center gap-1">
+            <i class="fas fa-sync"></i> Actualizar
+          </button>
+        </div>
+        <div id="docsList" class="space-y-3"></div>
+      </div>
+    </div>
+
+    <!-- Botón flotante subir documento -->
+    <div onclick="showUploadModal()" 
+         class="fixed bottom-8 right-8 bg-blue-600 text-white w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center text-3xl hover:scale-110 transition">
+      <i class="fas fa-plus"></i>
     </div>
   </div>
 
+  <!-- MODAL SUBIR DOCUMENTO -->
+  <div id="uploadModal" onclick="if(event.target===this) hideUploadModal()" 
+       class="hidden fixed inset-0 bg-black/60 flex items-end">
+    <div onclick="event.stopImmediatePropagation()" 
+         class="bg-white w-full max-w-[480px] mx-auto rounded-t-3xl p-6">
+      <h3 class="text-xl font-semibold mb-4">Subir Documento</h3>
+      
+      <select id="modalTipoDoc" class="w-full px-4 py-3 border rounded-2xl mb-4 text-sm"></select>
+      
+      <div class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center cursor-pointer"
+           onclick="document.getElementById('modalFile').click()">
+        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+        <p class="text-sm text-gray-500">Toca para seleccionar foto</p>
+        <input type="file" id="modalFile" accept="image/*" class="hidden" onchange="previewModalFile(this)">
+      </div>
+      
+      <div id="modalPreview" class="hidden mt-4 text-center">
+        <img id="modalImgPreview" class="max-h-64 mx-auto rounded-2xl shadow">
+      </div>
+
+      <div class="mt-6">
+        <label class="text-xs font-medium text-gray-500">Fecha de vencimiento</label>
+        <input id="modalFechaVence" type="date" class="w-full mt-1 px-4 py-3 border rounded-2xl">
+      </div>
+
+      <button onclick="subirDocumentoActual()" 
+              class="mt-8 w-full bg-green-600 text-white py-4 rounded-2xl font-semibold">Subir Documento</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
   <div id="toast" class="hidden fixed bottom-6 right-6 bg-gray-800 text-white px-5 py-3 rounded-2xl shadow-2xl"></div>
 </div>
 
@@ -76,12 +206,14 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPVj03KRrCd-AqhZa_1TdqwgIuEFR4VacLW8XY9qTUi0DZcnI3zV_ZxaAX6miGeUJfvA/exec"; 
 
 let currentUser = null;
+let currentFileBase64 = null;
+let currentFileType = null;
 
-// ==================== CALLBACKEND (VERSIÓN ESTABLE) ====================
+// ==================== CALLBACKEND ====================
 async function callBackend(action, payload = {}) {
   try {
     const fullPayload = { action, ...payload };
-    console.log(`→ Enviando acción: ${action}`, fullPayload);
+    console.log(`→ Enviando: ${action}`, fullPayload);
 
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
@@ -92,7 +224,7 @@ async function callBackend(action, payload = {}) {
     const text = await response.text();
     console.log("Respuesta raw:", text.substring(0, 400));
 
-    let result = {};
+    let result;
     try {
       result = JSON.parse(text);
     } catch (e) {
@@ -104,10 +236,20 @@ async function callBackend(action, payload = {}) {
     return result.data || result;
 
   } catch (err) {
-    console.error("Error en callBackend:", err);
+    console.error("Error callBackend:", err);
     showToast(err.message || "Error de conexión", "error");
     throw err;
   }
+}
+
+// ==================== TABS ====================
+function switchTab(n) {
+  document.getElementById("loginForm").classList.toggle("hidden", n === 1);
+  document.getElementById("registerForm").classList.toggle("hidden", n === 0);
+  document.getElementById("tabLogin").classList.toggle("border-b-2", n === 0);
+  document.getElementById("tabRegister").classList.toggle("border-b-2", n === 1);
+  document.getElementById("tabLogin").classList.toggle("text-blue-600", n === 0);
+  document.getElementById("tabRegister").classList.toggle("text-blue-600", n === 1);
 }
 
 // ==================== LOGIN ====================
@@ -126,11 +268,160 @@ async function doLogin() {
   } catch (e) {}
 }
 
-function showDashboard() {
+// ==================== CHECK DNI REGISTRO ====================
+async function checkDniAutoFill() {
+  const dni = document.getElementById("regDni").value.trim();
+  if (dni.length !== 8) return;
+
+  try {
+    const res = await callBackend("CONSULTAR_DNI_REGISTRO", { dni });
+    if (res.tiene_cuenta) {
+      showToast("Este DNI ya tiene cuenta. Inicia sesión.", "error");
+      switchTab(0);
+      document.getElementById("loginDni").value = dni;
+      return;
+    }
+    if (res.found) {
+      document.getElementById("regNames").value = res.nombres || "";
+      document.getElementById("regApellidos").value = res.apellidos || "";
+      document.getElementById("regEmpresa").value = res.empresaId || "";
+      document.getElementById("regCargo").value = res.cargo || "AUXILIAR";
+      toggleBreveteField();
+    }
+  } catch (e) {}
+}
+
+// ==================== REGISTRO ====================
+async function doRegister() {
+  const dni = document.getElementById("regDni").value.trim();
+  const nombres = document.getElementById("regNames").value.trim();
+  const apellidos = document.getElementById("regApellidos").value.trim();
+  const empresaId = document.getElementById("regEmpresa").value;
+  const cargo = document.getElementById("regCargo").value;
+  const dniVence = document.getElementById("dniVence").value;
+
+  if (!dni || !nombres || !apellidos || !empresaId || !dniVence) {
+    return showToast("Completa todos los campos obligatorios", "error");
+  }
+
+  try {
+    const payload = {
+      dni, nombres, apellidos, cargo, empresaId,
+      dniVence,
+      dniFile: document.getElementById("fileDni").files[0] ? await getBase64(document.getElementById("fileDni").files[0]) : null,
+      breveteVence: document.getElementById("breveteVence").value || null,
+      breveteFile: document.getElementById("fileBrevete").files[0] ? await getBase64(document.getElementById("fileBrevete").files[0]) : null
+    };
+
+    await callBackend("REGISTER_TRIPULANTE", payload);
+    showToast("¡Registro exitoso! Tu contraseña son los últimos 4 dígitos del DNI.", "success");
+    switchTab(0);
+    document.getElementById("loginDni").value = dni;
+    document.getElementById("loginPass").value = dni.slice(-4);
+  } catch (e) {}
+}
+
+// ==================== DASHBOARD ====================
+async function showDashboard() {
   document.getElementById("authScreen").classList.add("hidden");
   document.getElementById("dashScreen").classList.remove("hidden");
+
   document.getElementById("dashNombre").textContent = currentUser.nombre || "Usuario";
   document.getElementById("dashCargo").textContent = currentUser.cargo || "Tripulante";
+  document.getElementById("dashEmpresa").textContent = currentUser.empresa_nombre || "";
+
+  await loadMisPendientes();
+}
+
+async function loadMisPendientes() {
+  try {
+    const docs = await callBackend("GET_MIS_PENDIENTES", {
+      tipoNexo: "TRIPULACION",
+      idEntidad: currentUser.dni
+    });
+
+    const container = document.getElementById("docsList");
+    container.innerHTML = "";
+
+    let total = 0, ok = 0;
+
+    docs.forEach(doc => {
+      if (doc.obligatorio) total++;
+      const pct = total ? Math.round((ok / total) * 100) : 0;
+
+      document.getElementById("kpiRing").style.setProperty("--progress", pct + "%");
+      document.getElementById("kpiValue").textContent = pct + "%";
+
+      const div = document.createElement("div");
+      div.className = "flex items-center justify-between bg-white border border-gray-200 rounded-2xl p-4";
+      div.innerHTML = `
+        <div>
+          <div class="font-medium">${doc.tipo_documento}</div>
+          <div class="text-xs text-gray-500">${doc.vencimiento ? "Vence: " + new Date(doc.vencimiento).toLocaleDateString("es-PE") : ""}</div>
+        </div>
+        <div class="text-right">
+          <span class="inline-block px-3 py-1 text-xs font-bold rounded-xl ${doc.estado === 'APROBADO' ? 'bg-green-100 text-green-700' : doc.estado === 'PENDIENTE_VALIDACION' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}">
+            ${doc.estado}
+          </span>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// ==================== MODAL SUBIR ====================
+function showUploadModal() {
+  document.getElementById("uploadModal").classList.remove("hidden");
+  const select = document.getElementById("modalTipoDoc");
+  select.innerHTML = `
+    <option value="DNI">DNI</option>
+    <option value="BREVETE">Brevete</option>
+    <option value="CARNET SANIDAD">Carnet de Sanidad</option>
+    <option value="SCTR">SCTR</option>
+  `;
+}
+
+function hideUploadModal() {
+  document.getElementById("uploadModal").classList.add("hidden");
+  currentFileBase64 = null;
+}
+
+function previewModalFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentFileBase64 = e.target.result.split(",")[1];
+    currentFileType = file.type;
+    document.getElementById("modalPreview").classList.remove("hidden");
+    document.getElementById("modalImgPreview").src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function subirDocumentoActual() {
+  const tipo = document.getElementById("modalTipoDoc").value;
+  const fecha = document.getElementById("modalFechaVence").value;
+
+  if (!tipo || !currentFileBase64) return showToast("Selecciona documento y foto", "error");
+
+  try {
+    await callBackend("UPLOAD_DOCUMENTO", {
+      tipoNexo: "TRIPULACION",
+      nexoId: currentUser.dni,
+      tipoDocumento: tipo,
+      base64File: currentFileBase64,
+      mimeType: currentFileType,
+      fechaVencimiento: fecha
+    });
+
+    hideUploadModal();
+    showToast("Documento subido correctamente", "success");
+    loadMisPendientes();
+  } catch (e) {}
 }
 
 // ==================== HELPERS ====================
@@ -147,19 +438,54 @@ function logout() {
   location.reload();
 }
 
-function switchTab(n) {
-  document.getElementById("loginForm").classList.toggle("hidden", n === 1);
-  document.getElementById("registerForm").classList.toggle("hidden", n === 0);
+function triggerFile(id) {
+  document.getElementById("file" + id.charAt(0).toUpperCase() + id.slice(1)).click();
+}
+
+function handleFile(input, key) {
+  if (input.files[0]) {
+    document.getElementById("preview" + key.charAt(0).toUpperCase() + key.slice(1)).classList.remove("hidden");
+  }
+}
+
+function toggleBreveteField() {
+  const show = document.getElementById("regCargo").value === "CONDUCTOR";
+  document.getElementById("breveteGroup").classList.toggle("hidden", !show);
+}
+
+async function getBase64(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(",")[1]);
+    reader.readAsDataURL(file);
+  });
 }
 
 // ==================== INIT ====================
-window.onload = () => {
+async function init() {
   const saved = localStorage.getItem("bpdt_tripulante");
   if (saved) {
     currentUser = JSON.parse(saved);
     showDashboard();
   }
-};
+
+  // Cargar empresas
+  try {
+    const empresas = await callBackend("GET_LISTA_EMPRESAS");
+    const sel = document.getElementById("regEmpresa");
+    sel.innerHTML = '<option value="">Selecciona empresa...</option>';
+    empresas.forEach(e => {
+      const opt = document.createElement("option");
+      opt.value = e.id;
+      opt.textContent = e.nombre;
+      sel.appendChild(opt);
+    });
+  } catch (e) {
+    console.error("Error cargando empresas:", e);
+  }
+}
+
+window.onload = init;
 </script>
 </body>
 </html>
