@@ -1,6 +1,6 @@
 // api.js - Cliente compartido para las 3 apps (GitHub Pages)
 
-const SCRIPT_URL = "https://script.google.com/macros/s/TU_URL_AQUI/exec";  
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAbsjeav_HQXjD-R6JRj83uaTskp0LVD_NK3W1b78pibfmmMQ1FlNYpX1Lgh-I6bD0Sg/exec";  
 // ← Cambia esto por tu URL real del Web App
 
 async function callBackend(action, payload = {}) {
