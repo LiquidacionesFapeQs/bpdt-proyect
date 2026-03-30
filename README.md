@@ -1,4 +1,4 @@
-# bpdt-frontends
+# bpdt-proyect
 
 Monorepo de frontends para el sistema BPDT (Tripulante, Asistente, etc.).
 
