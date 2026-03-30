@@ -4,9 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HT-BPDT | Tripulante</title>
+  
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <style>
+    /* =========================================
+       ESTILO EMPRESARIAL BPdT
+       ========================================= */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
     :root {
       --bg-page:      #F5F4F0;
       --bg-primary:   #FFFFFF;
@@ -16,13 +23,13 @@
       --text-tertiary:  #888780;
       --border-light: rgba(0,0,0,0.10);
       --border-mid:   rgba(0,0,0,0.18);
-      --radius-sm: 6px;
       --radius-md: 8px;
       --radius-lg: 12px;
-      --green: #1D9E75; --green-bg: #EAF3DE; --green-text: #3B6D11;
-      --amber: #BA7517; --amber-bg: #FAEEDA; --amber-text: #854F0B;
-      --blue:  #185FA5; --blue-bg:  #E6F1FB;
-      --red:   #A32D2D; --red-bg:   #FCEBEB;
+      --green: #1D9E75;
+      --amber: #BA7517;
+      --blue: #185FA5;
+      --red: #A32D2D;
+      --blue-bg: #E6F1FB;
     }
 
     body {
@@ -33,519 +40,345 @@
       line-height: 1.5;
       min-height: 100vh;
       display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-primary);
+      min-height: 100vh;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      border-left: 0.5px solid var(--border-light);
+      border-right: 0.5px solid var(--border-light);
+      display: flex;
       flex-direction: column;
     }
 
-    /* ── TOPBAR ── */
-    .topbar {
+    /* Header */
+    .auth-header {
+      padding: 32px 24px 24px;
+      text-align: center;
       background: var(--bg-primary);
       border-bottom: 0.5px solid var(--border-light);
-      padding: 0 24px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 50;
     }
-    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .auth-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+    .auth-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
     .logo-pill {
-      background: var(--text-primary);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-    }
-    .topbar-title { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .topbar-badge {
-      font-size: 11px;
-      padding: 3px 9px;
-      border-radius: 20px;
+      display: inline-block;
       background: var(--blue-bg);
       color: var(--blue);
-      font-weight: 500;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-top: 16px;
+      text-transform: uppercase;
     }
 
-    /* ── AUTH WRAPPER ── */
-    .auth-outer {
-      flex: 1;
+    /* Tabs */
+    .tabs-row {
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 40px 16px 60px;
-    }
-    .auth-card {
       background: var(--bg-primary);
-      border: 0.5px solid var(--border-light);
-      border-radius: var(--radius-lg);
-      width: 100%;
-      max-width: 420px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    }
-
-    /* ── AUTH HEADER ── */
-    .auth-header {
-      padding: 28px 28px 20px;
-      border-bottom: 0.5px solid var(--border-light);
-    }
-    .auth-header-top {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 4px;
-    }
-    .auth-title { font-size: 18px; font-weight: 600; color: var(--text-primary); }
-    .auth-sub   { font-size: 12px; color: var(--text-tertiary); }
-
-    /* ── TABS ── */
-    .tab-row {
-      display: flex;
-      gap: 4px;
-      padding: 14px 28px 0;
       border-bottom: 0.5px solid var(--border-light);
     }
     .tab-btn {
+      flex: 1;
+      padding: 16px 0;
       font-size: 13px;
       font-weight: 500;
-      color: var(--text-tertiary);
-      background: none;
+      background: transparent;
       border: none;
-      padding: 8px 14px;
-      border-bottom: 2px solid transparent;
       cursor: pointer;
-      margin-bottom: -0.5px;
-      transition: color 0.15s;
+      color: var(--text-tertiary);
+      border-bottom: 2px solid transparent;
     }
     .tab-btn.active {
-      color: var(--text-primary);
-      border-bottom-color: var(--text-primary);
+      color: var(--blue);
+      border-bottom: 2px solid var(--blue);
     }
-    .tab-btn:hover:not(.active) { color: var(--text-secondary); }
 
-    /* ── FORM BODY ── */
-    .form-body { padding: 22px 28px 28px; }
-    .form-group { margin-bottom: 16px; }
-    .form-label {
+    /* Formularios */
+    .form-wrapper {
+      padding: 24px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .section-label {
       display: block;
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       color: var(--text-tertiary);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    .form-input {
+
+    .input-control {
       width: 100%;
-      padding: 10px 13px;
+      padding: 12px 16px;
       border: 0.5px solid var(--border-mid);
       border-radius: var(--radius-md);
       font-size: 14px;
-      color: var(--text-primary);
       background: var(--bg-primary);
       outline: none;
-      transition: border-color 0.15s;
-      font-family: inherit;
-      appearance: none;
     }
-    .form-input:focus { border-color: var(--blue); }
-    .form-input::placeholder { color: var(--text-tertiary); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .input-control:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-bg);
+    }
 
-    /* ── UPLOAD BOX ── */
-    .upload-section {
+    select.input-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888780' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 14px;
+      padding-right: 36px;
+    }
+
+    /* File Upload */
+    .file-panel {
       background: var(--bg-secondary);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      margin-bottom: 16px;
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 20px;
+      border: 0.5px solid var(--border-light);
     }
-    .upload-section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 10px;
+    .file-panel.amber {
+      background: #FAEEDA;
+      border-color: rgba(186, 117, 23, 0.2);
     }
-    .upload-box {
-      border: 0.5px dashed var(--border-mid);
+    .drop-zone {
+      border: 1px dashed var(--border-mid);
       border-radius: var(--radius-md);
-      padding: 18px 12px;
+      padding: 24px;
       text-align: center;
       cursor: pointer;
       background: var(--bg-primary);
-      transition: border-color 0.15s, background 0.15s;
     }
-    .upload-box:hover { border-color: var(--blue); background: var(--blue-bg); }
-    .upload-icon { font-size: 22px; color: var(--text-tertiary); margin-bottom: 6px; }
-    .upload-text { font-size: 12px; color: var(--text-secondary); }
-    .upload-done { font-size: 11px; color: var(--green); font-weight: 500; margin-top: 6px; display: none; }
-    .upload-section.amber { background: var(--amber-bg); }
-    .upload-section.amber .upload-box { border-color: rgba(186,117,23,0.30); }
-    .upload-section.amber .upload-box:hover { border-color: var(--amber); background: rgba(186,117,23,0.06); }
-    .upload-section.amber .upload-icon { color: var(--amber); }
+    .drop-zone:hover {
+      border-color: var(--blue);
+      background: var(--blue-bg);
+    }
 
-    /* ── BUTTONS ── */
-    .btn-primary {
+    /* Botones */
+    .btn-primary, .btn-success {
       width: 100%;
-      padding: 11px;
-      background: var(--text-primary);
-      color: #fff;
+      padding: 14px;
       border: none;
       border-radius: var(--radius-md);
-      font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      font-family: inherit;
-      transition: opacity 0.15s;
     }
-    .btn-primary:hover { opacity: 0.85; }
-    .btn-secondary {
-      width: 100%;
-      padding: 11px;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 0.5px solid var(--border-mid);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.15s;
-    }
-    .btn-secondary:hover { background: #E8E5DC; }
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-success { background: var(--green); color: white; }
 
-    /* ── STATUS TEXT ── */
-    .status-text { font-size: 11px; color: var(--text-tertiary); margin-top: 5px; }
-    .status-ok  { color: var(--green); }
-    .status-err { color: var(--red); }
-    .hidden-form { display: none; }
-
-    /* ── DASHBOARD ── */
-    #dashScreen { display: none; }
-    .dash-page { max-width: 960px; margin: 0 auto; padding: 28px 24px 60px; }
-
-    /* Profile card */
-    .profile-card {
+    /* Dashboard */
+    .topbar {
       background: var(--bg-primary);
-      border: 0.5px solid var(--border-light);
-      border-radius: var(--radius-lg);
-      padding: 20px 24px;
+      border-bottom: 0.5px solid var(--border-light);
+      padding: 16px 24px;
       display: flex;
       align-items: center;
-      gap: 18px;
-      margin-bottom: 20px;
+      gap: 14px;
     }
-    .profile-avatar {
-      width: 48px; height: 48px;
+    .avatar {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: var(--blue-bg);
       color: var(--blue);
-      font-size: 18px;
-      font-weight: 600;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .profile-name { font-size: 16px; font-weight: 600; }
-    .profile-meta { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-    .profile-actions { margin-left: auto; }
-    .btn-ghost {
-      font-size: 12px;
-      padding: 6px 13px;
-      border-radius: var(--radius-md);
-      border: 0.5px solid var(--border-mid);
-      background: transparent;
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.15s;
-    }
-    .btn-ghost:hover { background: var(--bg-secondary); }
-
-    /* Section label */
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* Doc cards */
-    .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .doc-card {
-      background: var(--bg-primary);
-      border: 0.5px solid var(--border-light);
-      border-radius: var(--radius-lg);
-      padding: 16px 18px;
+    .dash-body {
+      padding: 24px;
+      background: var(--bg-page);
+      flex: 1;
     }
-    .doc-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
-    .doc-card-title { font-size: 13px; font-weight: 500; }
-    .doc-card-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
-    .badge {
-      display: inline-flex; align-items: center;
-      font-size: 11px; padding: 3px 8px;
-      border-radius: 20px; white-space: nowrap;
-      font-weight: 500;
-    }
-    .b-green  { background: var(--green-bg);  color: var(--green-text); }
-    .b-amber  { background: var(--amber-bg);  color: var(--amber-text); }
-    .b-red    { background: var(--red-bg);    color: var(--red); }
-    .b-gray   { background: var(--bg-secondary); color: var(--text-secondary); }
-    .doc-bar-bg { height: 4px; border-radius: 2px; background: var(--border-light); margin-top: 12px; }
-    .doc-bar-fill { height: 4px; border-radius: 2px; }
-    .doc-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-    .doc-date { font-size: 11px; color: var(--text-tertiary); }
-    .upload-btn {
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      border: 0.5px solid var(--border-mid);
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-primary);
-      font-family: inherit;
-      transition: background 0.12s;
-    }
-    .upload-btn:hover { background: var(--bg-secondary); }
 
-    /* TOAST */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      padding: 11px 18px;
-      border-radius: var(--radius-md);
-      font-size: 13px;
-      font-weight: 500;
-      color: #fff;
-      display: none;
-      z-index: 999;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.16);
-      animation: toastIn 0.25s ease forwards;
-    }
-    @keyframes toastIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .toast.ok  { background: var(--green); }
-    .toast.err { background: var(--red);   }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <span class="logo-pill">HT-BPDT</span>
-      <span class="topbar-title">Control Documental de Transporte</span>
+<div class="app-container">
+
+  <!-- AUTH SCREEN -->
+  <div id="authScreen">
+    <div class="auth-header">
+      <h1 class="auth-title">HT-BPDT</h1>
+      <p class="auth-subtitle">Control Documental de Transporte</p>
+      <div class="logo-pill">Portal Tripulante</div>
     </div>
-    <div class="topbar-right">
-      <span class="topbar-badge">Portal Tripulante</span>
+
+    <div class="tabs-row">
+      <button onclick="switchTab(0)" id="tabLogin" class="tab-btn active">Iniciar Sesión</button>
+      <button onclick="switchTab(1)" id="tabRegister" class="tab-btn">Crear Cuenta</button>
     </div>
-  </header>
 
-  <!-- ══════════ AUTH ══════════ -->
-  <div id="authScreen" class="auth-outer">
-    <div class="auth-card">
-
-      <!-- Card header -->
-      <div class="auth-header">
-        <div class="auth-header-top">
-          <div class="auth-title">Acceso Tripulante</div>
-        </div>
-        <div class="auth-sub">Ingresa tus credenciales para continuar</div>
+    <!-- LOGIN -->
+    <div id="loginForm" class="form-wrapper">
+      <div class="form-group">
+        <label class="section-label">DNI (8 dígitos)</label>
+        <input id="loginDni" type="text" maxlength="8" inputmode="numeric" class="input-control" placeholder="16528921">
       </div>
-
-      <!-- Tabs -->
-      <div class="tab-row">
-        <button class="tab-btn active" onclick="switchTab(0)" id="tabLogin">Iniciar sesión</button>
-        <button class="tab-btn" onclick="switchTab(1)" id="tabRegister">Crear cuenta</button>
+      <div class="form-group">
+        <label class="section-label">Contraseña</label>
+        <input id="loginPass" type="password" class="input-control" placeholder="Últimos 4 dígitos del DNI">
       </div>
+      <button onclick="doLogin()" class="btn-primary">Ingresar</button>
+    </div>
 
-      <!-- ── LOGIN ── -->
-      <div id="loginForm" class="form-body">
+    <!-- REGISTER -->
+    <div id="registerForm" class="hidden form-wrapper">
+      <div>
         <div class="form-group">
-          <label class="form-label">DNI (8 dígitos)</label>
-          <input id="loginDni" type="text" maxlength="8" inputmode="numeric"
-                 class="form-input" placeholder="Ej. 16528921">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input id="loginPass" type="password"
-                 class="form-input" placeholder="Últimos 4 dígitos del DNI">
-        </div>
-        <button onclick="doLogin()" class="btn-primary" style="margin-top:6px;">Ingresar</button>
-      </div>
-
-      <!-- ── REGISTER ── -->
-      <div id="registerForm" class="form-body hidden-form">
-
-        <div class="form-group">
-          <label class="form-label">DNI</label>
-          <input id="regDni" type="text" maxlength="8" inputmode="numeric"
-                 oninput="if(this.value.length===8) checkDniAutoFill()"
-                 class="form-input" placeholder="12345678">
+          <label class="section-label">DNI</label>
+          <input id="regDni" type="text" maxlength="8" inputmode="numeric" 
+                 oninput="if(this.value.length===8) checkDniAutoFill()" 
+                 class="input-control" placeholder="12345678">
         </div>
 
-        <div class="grid-2" style="margin-bottom:16px;">
+        <div class="form-row">
           <div>
-            <label class="form-label">Nombres</label>
-            <input id="regNames" type="text" class="form-input" placeholder="Carlos">
+            <label class="section-label">Nombres</label>
+            <input id="regNames" type="text" class="input-control">
           </div>
           <div>
-            <label class="form-label">Apellidos</label>
-            <input id="regApellidos" type="text" class="form-input" placeholder="Quispe">
+            <label class="section-label">Apellidos</label>
+            <input id="regApellidos" type="text" class="input-control">
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Empresa</label>
-          <select id="regEmpresa" class="form-input">
-            <option value="">Cargando empresas…</option>
+          <label class="section-label">Empresa</label>
+          <select id="regEmpresa" class="input-control">
+            <option value="">Cargando empresas...</option>
           </select>
-          <div id="empresaStatus" class="status-text"></div>
+          <p id="empresaStatus" class="text-feedback mt-1" style="font-size:12px;"></p>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Cargo</label>
-          <select id="regCargo" onchange="toggleBreveteField()" class="form-input">
+          <label class="section-label">Cargo</label>
+          <select id="regCargo" onchange="toggleBreveteField()" class="input-control">
             <option value="AUXILIAR">Auxiliar</option>
             <option value="CONDUCTOR">Conductor</option>
           </select>
         </div>
 
         <!-- Foto DNI -->
-        <div class="upload-section">
-          <div class="upload-section-label">Foto DNI</div>
-          <div class="upload-box" onclick="triggerFile('dni')">
-            <div class="upload-icon"><i class="fas fa-camera"></i></div>
-            <div class="upload-text">Toca para subir foto del DNI</div>
-            <div id="previewDni" class="upload-done">✓ Archivo listo</div>
+        <div class="file-panel">
+          <label class="section-label">Foto DNI</label>
+          <div onclick="triggerFile('dni')" class="drop-zone">
+            <i class="fas fa-camera icon-xl" style="font-size:28px; margin-bottom:8px;"></i>
+            <p class="drop-text">Toca para subir foto del DNI</p>
+            <div id="previewDni" class="hidden mt-2 text-green-600 text-sm">✅ Archivo listo</div>
           </div>
-          <input type="file" id="fileDni" accept="image/*" class="" style="display:none;" onchange="handleFile(this,'dni')">
-          <input type="date" id="dniVence" class="form-input" style="margin-top:10px;">
+          <input type="file" id="fileDni" accept="image/*" class="hidden" onchange="handleFile(this, 'dni')">
+          <input type="date" id="dniVence" class="input-control mt-3">
         </div>
 
         <!-- Brevete -->
-        <div id="breveteGroup" class="upload-section amber" style="display:none;">
-          <div class="upload-section-label">Foto Licencia (Brevete)</div>
-          <div class="upload-box" onclick="triggerFile('brevete')">
-            <div class="upload-icon"><i class="fas fa-id-card"></i></div>
-            <div class="upload-text">Toca para subir foto del brevete</div>
-            <div id="previewBrevete" class="upload-done">✓ Archivo listo</div>
+        <div id="breveteGroup" class="hidden file-panel amber">
+          <label class="section-label">Foto Licencia (Brevete)</label>
+          <div onclick="triggerFile('brevete')" class="drop-zone">
+            <i class="fas fa-id-card icon-xl" style="font-size:28px; margin-bottom:8px;"></i>
+            <p class="drop-text">Toca para subir foto del brevete</p>
+            <div id="previewBrevete" class="hidden mt-2 text-green-600 text-sm">✅ Archivo listo</div>
           </div>
-          <input type="file" id="fileBrevete" accept="image/*" style="display:none;" onchange="handleFile(this,'brevete')">
-          <input type="date" id="breveteVence" class="form-input" style="margin-top:10px;">
+          <input type="file" id="fileBrevete" accept="image/*" class="hidden" onchange="handleFile(this, 'brevete')">
+          <input type="date" id="breveteVence" class="input-control mt-3">
         </div>
 
-        <button onclick="doRegister()" class="btn-primary">Crear cuenta</button>
-        <button onclick="switchTab(0)" class="btn-secondary" style="margin-top:8px;">Ya tengo cuenta</button>
+        <button onclick="doRegister()" id="btnRegister" class="btn-success">Crear Cuenta</button>
       </div>
-
     </div>
   </div>
 
-  <!-- ══════════ DASHBOARD ══════════ -->
-  <div id="dashScreen">
-    <div class="dash-page">
-
-      <!-- Profile -->
-      <div class="profile-card">
-        <div class="profile-avatar" id="dashAvatar">–</div>
-        <div>
-          <div class="profile-name" id="dashNombre">—</div>
-          <div class="profile-meta" id="dashCargo">—</div>
-        </div>
-        <div class="profile-actions">
-          <button class="btn-ghost" onclick="doLogout()">Cerrar sesión</button>
-        </div>
+  <!-- DASHBOARD -->
+  <div id="dashScreen" class="hidden flex flex-col min-h-screen">
+    <div class="topbar">
+      <div class="avatar"><i class="fas fa-user"></i></div>
+      <div>
+        <div id="dashNombre" class="font-semibold"></div>
+        <div id="dashCargo" class="text-sm text-gray-500"></div>
       </div>
-
-      <!-- Doc section -->
-      <div class="section-label" style="margin-top:4px;">Mis documentos</div>
-      <div class="doc-grid" id="docGrid">
-        <!-- filled by JS -->
-      </div>
-
+    </div>
+    <div class="dash-body">
+      <p class="text-center text-gray-500">Dashboard cargado correctamente</p>
     </div>
   </div>
 
   <!-- TOAST -->
-  <div id="toast" class="toast"></div>
+  <div id="toast" class="hidden fixed bottom-6 right-6 px-5 py-3 rounded-lg shadow-xl text-sm"></div>
+</div>
 
 <script>
 // ==================== CONFIG ====================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzO5nB4n5aJTdDtHZDahnQ8PU1350Yug4YBnLQUsDwoX6mPUcXLdQPo-oWZbQR6w1ps1Q/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAbsjeav_HQXjD-R6JRj83uaTskp0LVD_NK3W1b78pibfmmMQ1FlNYpX1Lgh-I6bD0Sg/exec"; 
+// ←←← CAMBIA ESTA LÍNEA con tu URL real del Web App
 
 let currentUser = null;
 
-// ==================== BACKEND ====================
+// ==================== CALLBACKEND (usa api.js) ====================
 async function callBackend(action, payload = {}) {
   try {
-    const fullPayload = { action, ...payload };
-    console.log(`→ Enviando: ${action}`, fullPayload);
-
-    const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(fullPayload)
-    });
-
-    const text = await response.text();
-    console.log("Respuesta raw:", text.substring(0, 400));
-
-    let result;
-    try {
-      result = JSON.parse(text);
-    } catch (e) {
-      const match = text.match(/\{[\s\S]*\}/);
-      result = match ? JSON.parse(match[0]) : { status: "error", message: text };
-    }
-
-    if (result.status === "error") throw new Error(result.message || "Error del servidor");
-    return result.data || result;
-
+    console.log(`→ Enviando: ${action}`, payload);
+    const data = await window.API.callBackend(action, payload);
+    return data;
   } catch (err) {
     console.error("Error callBackend:", err);
-    showToast(err.message || "Error de conexión", "err");
+    showToast(err.message || "Error de conexión", "error");
     throw err;
   }
 }
 
 // ==================== TABS ====================
 function switchTab(n) {
-  document.getElementById("loginForm").style.display    = n === 0 ? "" : "none";
-  document.getElementById("registerForm").style.display = n === 1 ? "" : "none";
+  document.getElementById("loginForm").classList.toggle("hidden", n === 1);
+  document.getElementById("registerForm").classList.toggle("hidden", n === 0);
   document.getElementById("tabLogin").classList.toggle("active", n === 0);
   document.getElementById("tabRegister").classList.toggle("active", n === 1);
 }
 
 // ==================== LOGIN ====================
 async function doLogin() {
-  const dni  = document.getElementById("loginDni").value.trim();
+  const dni = document.getElementById("loginDni").value.trim();
   const pass = document.getElementById("loginPass").value.trim();
-  if (!dni || dni.length !== 8) return showToast("DNI inválido (8 dígitos)", "err");
+  if (!dni || dni.length !== 8) return showToast("DNI inválido", "error");
 
   try {
     const data = await callBackend("LOGIN", { username: dni, password: pass });
     currentUser = data;
     localStorage.setItem("bpdt_tripulante", JSON.stringify(data));
     showDashboard();
-  } catch (e) {}
+  } catch (e) {
+    showToast(e.message, "error");
+  }
 }
 
-// ==================== LOGOUT ====================
-function doLogout() {
-  currentUser = null;
-  localStorage.removeItem("bpdt_tripulante");
-  document.getElementById("dashScreen").style.display = "none";
-  document.getElementById("authScreen").style.display = "flex";
-}
-
-// ==================== CHECK DNI ====================
+// ==================== AUTO FILL DNI ====================
 async function checkDniAutoFill() {
   const dni = document.getElementById("regDni").value.trim();
   if (dni.length !== 8) return;
@@ -553,114 +386,93 @@ async function checkDniAutoFill() {
   try {
     const res = await callBackend("CONSULTAR_DNI_REGISTRO", { dni });
     if (res.tiene_cuenta) {
-      showToast("Este DNI ya tiene cuenta. Inicia sesión.", "err");
+      showToast("Este DNI ya tiene cuenta. Inicia sesión.", "error");
       switchTab(0);
       return;
     }
     if (res.found) {
-      document.getElementById("regNames").value     = res.nombres    || "";
-      document.getElementById("regApellidos").value = res.apellidos  || "";
-      document.getElementById("regEmpresa").value   = res.empresaId  || "";
-      document.getElementById("regCargo").value     = res.cargo      || "AUXILIAR";
-      toggleBreveteField();
+      document.getElementById("regNames").value = res.nombres || "";
+      document.getElementById("regApellidos").value = res.apellidos || "";
+      document.getElementById("regEmpresa").value = res.empresaId || "";
+      document.getElementById("regCargo").value = res.cargo || "AUXILIAR";
     }
   } catch (e) {}
 }
 
-// ==================== BREVETE ====================
-function toggleBreveteField() {
-  const cargo = document.getElementById("regCargo").value;
-  document.getElementById("breveteGroup").style.display = cargo === "CONDUCTOR" ? "" : "none";
-}
-
-// ==================== FILE UPLOAD ====================
-function triggerFile(type) {
-  document.getElementById(type === "dni" ? "fileDni" : "fileBrevete").click();
-}
-function handleFile(input, type) {
-  if (input.files && input.files[0]) {
-    const preview = document.getElementById(type === "dni" ? "previewDni" : "previewBrevete");
-    preview.style.display = "block";
-  }
-}
-
 // ==================== REGISTRO ====================
 async function doRegister() {
-  showToast("Registro en desarrollo", "err");
+  const dni = document.getElementById("regDni").value.trim();
+  const nombres = document.getElementById("regNames").value.trim();
+  const apellidos = document.getElementById("regApellidos").value.trim();
+  const empresaId = document.getElementById("regEmpresa").value;
+  const cargo = document.getElementById("regCargo").value;
+
+  if (!dni || dni.length !== 8) return showToast("DNI inválido", "error");
+  if (!nombres || !apellidos) return showToast("Nombres y apellidos son requeridos", "error");
+  if (!empresaId) return showToast("Selecciona una empresa", "error");
+
+  try {
+    const params = {
+      dni,
+      nombres,
+      apellidos,
+      empresa_id: empresaId,
+      cargo
+    };
+    const result = await callBackend("REGISTER_TRIPULANTE", params);
+    showToast(result.mensaje || "Registro exitoso", "success");
+    // Opcional: redirigir a login
+    switchTab(0);
+  } catch (e) {
+    showToast(e.message, "error");
+  }
 }
 
 // ==================== DASHBOARD ====================
 function showDashboard() {
-  document.getElementById("authScreen").style.display = "none";
-  document.getElementById("dashScreen").style.display = "block";
-
-  const nombre = currentUser.nombre || "Usuario";
-  document.getElementById("dashNombre").textContent = nombre;
-  document.getElementById("dashCargo").textContent  = currentUser.cargo || "";
-  document.getElementById("dashAvatar").textContent = nombre.charAt(0).toUpperCase();
-
-  // Demo doc cards
-  renderDocCards([
-    { title: "DNI",     vence: currentUser.dniVence || "—", estado: "vigente" },
-    { title: "Brevete", vence: currentUser.breveteVence || "—", estado: "por_vencer" },
-  ]);
-}
-
-function renderDocCards(docs) {
-  const badgeMap = {
-    vigente:    { cls: "b-green", label: "Vigente" },
-    por_vencer: { cls: "b-amber", label: "Por vencer" },
-    vencido:    { cls: "b-red",   label: "Vencido" },
-    sin_doc:    { cls: "b-gray",  label: "Sin documento" },
-  };
-  const barColor = { vigente: "var(--green)", por_vencer: "var(--amber)", vencido: "var(--red)", sin_doc: "var(--text-tertiary)" };
-
-  document.getElementById("docGrid").innerHTML = docs.map(d => {
-    const b = badgeMap[d.estado] || badgeMap.sin_doc;
-    return `
-    <div class="doc-card">
-      <div class="doc-card-top">
-        <div>
-          <div class="doc-card-title">${d.title}</div>
-          <div class="doc-card-sub">Documento personal</div>
-        </div>
-        <span class="badge ${b.cls}">${b.label}</span>
-      </div>
-      <div class="doc-bar-bg"><div class="doc-bar-fill" style="width:${d.estado==='vigente'?'80':d.estado==='por_vencer'?'45':'15'}%;background:${barColor[d.estado]};"></div></div>
-      <div class="doc-footer">
-        <span class="doc-date">Vence: ${d.vence}</span>
-        <button class="upload-btn">↑ Subir</button>
-      </div>
-    </div>`;
-  }).join("");
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("dashScreen").classList.remove("hidden");
+  document.getElementById("dashNombre").textContent = currentUser.nombre || "Usuario";
+  document.getElementById("dashCargo").textContent = currentUser.cargo || "";
 }
 
 // ==================== TOAST ====================
-function showToast(msg, type = "ok") {
+function showToast(msg, type = "success") {
   const t = document.getElementById("toast");
   t.textContent = msg;
-  t.className = `toast ${type}`;
-  t.style.display = "block";
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.display = "none"; }, 4000);
+  t.style.backgroundColor = type === "success" ? "#1D9E75" : "#A32D2D";
+  t.style.color = "white";
+  t.classList.remove("hidden");
+  setTimeout(() => t.classList.add("hidden"), 4000);
 }
 
-// ==================== INIT ====================
-async function init() {
-  const saved = localStorage.getItem("bpdt_tripulante");
-  if (saved) {
-    try {
-      currentUser = JSON.parse(saved);
-      showDashboard();
-      return;
-    } catch (e) {}
-  }
+// ==================== FILE HELPERS (por ahora básicos) ====================
+function triggerFile(type) {
+  document.getElementById(`file${type.charAt(0).toUpperCase() + type.slice(1)}`).click();
+}
 
-  // Load empresas
+function handleFile(input, type) {
+  if (input.files.length > 0) {
+    document.getElementById(`preview${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.remove("hidden");
+  }
+}
+
+function toggleBreveteField() {
+  const cargo = document.getElementById("regCargo").value;
+  document.getElementById("breveteGroup").classList.toggle("hidden", cargo !== "CONDUCTOR");
+}
+
+// ==================== INIT - CARGA DE EMPRESAS ====================
+async function init() {
+  console.log("🚀 Iniciando aplicación Tripulante...");
+
   try {
     const empresas = await callBackend("GET_LISTA_EMPRESAS");
+    console.log("✅ Empresas recibidas:", empresas);
+
     const sel = document.getElementById("regEmpresa");
-    sel.innerHTML = '<option value="">Selecciona empresa…</option>';
+    sel.innerHTML = '<option value="">Selecciona empresa...</option>';
+
     if (empresas && empresas.length > 0) {
       empresas.forEach(e => {
         const opt = document.createElement("option");
@@ -668,15 +480,16 @@ async function init() {
         opt.textContent = e.nombre;
         sel.appendChild(opt);
       });
-      document.getElementById("empresaStatus").innerHTML =
-        `<span class="status-ok">✓ ${empresas.length} empresas cargadas</span>`;
+      document.getElementById("empresaStatus").innerHTML = 
+        `<span style="color:#1D9E75">✓ ${empresas.length} empresas cargadas</span>`;
     } else {
-      document.getElementById("empresaStatus").innerHTML =
-        `<span class="status-err">⚠ No se encontraron empresas activas</span>`;
+      document.getElementById("empresaStatus").innerHTML = 
+        `<span style="color:#A32D2D">⚠ No se encontraron empresas</span>`;
     }
   } catch (e) {
-    document.getElementById("empresaStatus").innerHTML =
-      `<span class="status-err">✗ Error al cargar empresas</span>`;
+    console.error("❌ Error cargando empresas:", e);
+    document.getElementById("empresaStatus").innerHTML = 
+      `<span style="color:#A32D2D">✗ Error al cargar empresas</span>`;
   }
 }
 
