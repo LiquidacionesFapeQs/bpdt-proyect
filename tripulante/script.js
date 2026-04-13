@@ -52,37 +52,60 @@ function toggleFieldsByCargo() {
 }
 
 async function handleRegister() {
+    // 1. Capturamos el DNI y generamos la clave automáticamente
+    const dniInput = document.getElementById('reg-dni').value;
+    const autoPass = dniInput.toString().slice(-4); 
+
     const payload = {
         action: 'register',
-        dni: document.getElementById('reg-dni').value,
+        dni: dniInput,
         nombres: document.getElementById('reg-nombres').value,
         apellidos: document.getElementById('reg-apellidos').value,
         cargo: document.getElementById('reg-cargo').value,
         empresa: document.getElementById('reg-empresa').value,
         vencDni: document.getElementById('venc-dni').value,
-        vencLicencia: document.getElementById('venc-licencia').value
+        vencLicencia: document.getElementById('venc-licencia').value,
+        password: autoPass // Enviamos la clave autogenerada
     };
 
-    if(!payload.password) return alert("Debe crear una contraseña");
-
-    // Convertir archivos a Base64
-    toggleLoader(true, "Subiendo documentos...");
-    const fileDni = document.getElementById('file-dni').files[0];
-    const fileLic = document.getElementById('file-licencia').files[0];
-
-    if(fileDni) payload.fileDni = await toBase64(fileDni);
-    if(fileLic && payload.cargo === 'CONDUCTOR') payload.fileLicencia = await toBase64(fileLic);
-
-    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-    const result = await res.json();
-    toggleLoader(false);
-
-    if(result.success) {
-        alert(result.message);
-        showView('login');
-    } else {
-        alert("Error: " + result.message);
+    // 2. Validaciones de archivos y fechas obligatorias
+    if(!payload.dni || payload.dni.length < 8) return alert("DNI no válido.");
+    if(!payload.vencDni || !document.getElementById('file-dni').files[0]) {
+        return alert("El DNI y su fecha de vencimiento son obligatorios.");
     }
+    
+    if(payload.cargo === 'CONDUCTOR') {
+        if(!payload.vencLicencia || !document.getElementById('file-licencia').files[0]) {
+            return alert("Para conductores, la Licencia y su vencimiento son obligatorios.");
+        }
+    }
+
+    toggleLoader(true, "Procesando registro...");
+
+    try {
+        // 3. Conversión de archivos a Base64
+        const fileDni = document.getElementById('file-dni').files[0];
+        payload.fileDni = await toBase64(fileDni);
+
+        if(payload.cargo === 'CONDUCTOR') {
+            const fileLic = document.getElementById('file-licencia').files[0];
+            payload.fileLicencia = await toBase64(fileLic);
+        }
+
+        // 4. Envío al servidor (Apps Script)
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const result = await res.json();
+
+        if(result.success) {
+            alert(`¡Registro exitoso!\n\nTu contraseña de acceso son los últimos 4 dígitos de tu DNI: ${autoPass}`);
+            location.reload(); // Limpia el formulario y vuelve al login
+        } else {
+            alert("Error: " + result.message);
+        }
+    } catch (e) {
+        alert("Error de conexión con el servidor.");
+    }
+    toggleLoader(false);
 }
 
 // Helper: Convertir archivo a String Base64 para Apps Script
