@@ -1,594 +1,98 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BPdT — Dashboard Asistente de Transporte</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg-page:      #F5F4F0;
-    --bg-primary:   #FFFFFF;
-    --bg-secondary: #F1EFE8;
-    --text-primary:   #1A1A18;
-    --text-secondary: #5F5E5A;
-    --text-tertiary:  #888780;
-    --border-light: rgba(0,0,0,0.10);
-    --border-mid:   rgba(0,0,0,0.18);
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --green: #1D9E75; --amber: #BA7517; --blue: #185FA5; --red: #A32D2D;
-    --blue-bg: #E6F1FB;
-  }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg-page); color: var(--text-primary); font-size: 14px; line-height: 1.5; min-height: 100vh; }
-
-  /* Topbar */
-  .topbar { background: var(--bg-primary); border-bottom: 0.5px solid var(--border-light); padding: 0 32px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-  .topbar-left { display: flex; align-items: center; gap: 14px; }
-  .logo-pill { background: var(--text-primary); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 6px; }
-  .topbar-title { font-size: 14px; font-weight: 500; }
-  .topbar-company { font-size: 12px; color: var(--text-secondary); }
-  .topbar-right { display: flex; align-items: center; gap: 16px; }
-  .topbar-date { font-size: 12px; color: var(--text-tertiary); }
-  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--blue-bg); color: var(--blue); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
-
-  /* Layout */
-  .page { max-width: 1280px; margin: 0 auto; padding: 28px 32px 48px; }
-  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 10px; }
-  .mb-20 { margin-bottom: 20px; }
-  .mb-28 { margin-bottom: 28px; }
-
-  /* Alert */
-  .alert-banner { background: #FEF3C7; border: 0.5px solid #F59E0B; border-radius: var(--radius-md); padding: 10px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
-  .alert-icon { width: 20px; height: 20px; border-radius: 50%; background: #F59E0B; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .alert-icon svg { width: 11px; height: 11px; fill: white; }
-  .alert-text { font-size: 13px; color: #92400E; }
-  .alert-text strong { color: #78350F; }
-
-  /* KPIs */
-  .kpi-row { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr; gap: 12px; }
-  .kpi-main { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; justify-content: space-between; }
-  .kpi-main .lbl { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
-  .kpi-main .pct { font-size: 56px; font-weight: 500; line-height: 1; color: var(--green); }
-  .kpi-main .sub { font-size: 12px; color: var(--text-tertiary); margin-top: 10px; }
-  .kpi-main .trend { font-size: 12px; color: var(--green); margin-top: 4px; }
-  .kpi-card { background: var(--bg-secondary); border-radius: var(--radius-lg); padding: 1rem 1.25rem; display: flex; flex-direction: column; justify-content: space-between; }
-  .kpi-card .lbl { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
-  .kpi-card .val { font-size: 30px; font-weight: 500; line-height: 1; }
-  .kpi-card .bar-bg { height: 5px; border-radius: 3px; background: rgba(0,0,0,0.10); margin-top: 12px; }
-  .kpi-card .bar-fill { height: 5px; border-radius: 3px; }
-
-  /* Charts */
-  .charts-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  .chart-card { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 1rem 1.25rem; }
-  .chart-title { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
-  .chart-sub { font-size: 11px; color: var(--text-tertiary); margin-bottom: 14px; }
-  .canvas-wrap { position: relative; width: 100%; }
-  .legend-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; font-size: 11px; color: var(--text-secondary); }
-  .legend-row span { display: flex; align-items: center; gap: 4px; }
-  .ldot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-
-  /* Panels — 3 columnas */
-  .panels-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  .panel { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 1rem 1.25rem; }
-  .panel-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
-  .panel-title { font-size: 13px; font-weight: 500; }
-  .panel-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
-  .expand-btn { font-size: 12px; color: var(--blue); cursor: pointer; border: none; background: none; padding: 0; white-space: nowrap; flex-shrink: 0; }
-  .expand-btn:hover { text-decoration: underline; }
-
-  /* Heatmap cells */
-  .hm5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
-  .hm4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-  .hm3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-  .heat-cell { border-radius: 8px; padding: 8px 5px; text-align: center; cursor: pointer; transition: opacity 0.15s; }
-  .heat-cell:hover { opacity: 0.80; }
-  .cell-id  { font-size: 10px; font-weight: 500; }
-  .cell-pct { font-size: 13px; font-weight: 500; margin-top: 2px; }
-  .cell-sub { font-size: 9px; margin-top: 2px; opacity: 0.75; min-height: 12px; }
-  .heat-green { background: #EAF3DE; }
-  .heat-green .cell-id, .heat-green .cell-sub { color: #27500A; }
-  .heat-green .cell-pct { color: #3B6D11; }
-  .heat-amber { background: #FAEEDA; }
-  .heat-amber .cell-id, .heat-amber .cell-sub { color: #633806; }
-  .heat-amber .cell-pct { color: #854F0B; }
-  .heat-red { background: #FCEBEB; }
-  .heat-red .cell-id, .heat-red .cell-sub { color: #791F1F; }
-  .heat-red .cell-pct { color: #A32D2D; }
-
-  /* Table */
-  .table-section { background: var(--bg-primary); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 1rem 1.25rem; }
-  .table-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .filter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
-  .ftab { font-size: 12px; padding: 5px 11px; border-radius: var(--radius-md); border: 0.5px solid var(--border-light); cursor: pointer; background: transparent; color: var(--text-secondary); transition: background 0.12s; }
-  .ftab:hover { background: var(--bg-secondary); }
-  .ftab.active { background: var(--bg-secondary); color: var(--text-primary); border-color: var(--border-mid); font-weight: 500; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-  th { font-size: 11px; color: var(--text-tertiary); font-weight: 500; text-align: left; padding: 6px 10px; border-bottom: 0.5px solid var(--border-light); }
-  td { padding: 10px; border-bottom: 0.5px solid var(--border-light); color: var(--text-primary); vertical-align: middle; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--bg-page); }
-  .badge { display: inline-flex; align-items: center; font-size: 11px; padding: 3px 8px; border-radius: 20px; white-space: nowrap; font-weight: 500; }
-  .b-red    { background: #FCEBEB; color: #A32D2D; }
-  .b-amber  { background: #FAEEDA; color: #854F0B; }
-  .b-yellow { background: #FEF3C7; color: #92400E; }
-  .b-green  { background: #EAF3DE; color: #3B6D11; }
-  .b-gray   { background: #F1EFE8; color: #5F5E5A; }
-  .b-blue   { background: #E6F1FB; color: #185FA5; }
-  .upload-btn { font-size: 12px; padding: 5px 12px; border-radius: var(--radius-md); border: 0.5px solid var(--border-mid); cursor: pointer; background: transparent; color: var(--text-primary); transition: background 0.12s; }
-  .upload-btn:hover { background: var(--bg-secondary); }
-  .upload-btn.disabled { opacity: 0.3; cursor: default; pointer-events: none; }
-  .view-link { font-size: 12px; color: var(--blue); cursor: pointer; text-decoration: underline; }
-
-  /* Modal */
-  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.38); z-index: 200; align-items: flex-start; justify-content: center; padding-top: 60px; }
-  .modal-backdrop.open { display: flex; }
-  .modal { background: var(--bg-primary); border-radius: var(--radius-lg); border: 0.5px solid var(--border-mid); width: 780px; max-width: 95vw; max-height: 78vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.14); }
-  .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 0.5px solid var(--border-light); flex-shrink: 0; }
-  .modal-head-title { font-size: 14px; font-weight: 500; }
-  .modal-head-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
-  .close-btn { font-size: 18px; cursor: pointer; color: var(--text-secondary); border: none; background: none; line-height: 1; padding: 4px 8px; border-radius: var(--radius-md); }
-  .close-btn:hover { background: var(--bg-secondary); }
-  .modal-body { overflow-y: auto; padding: 1.25rem; }
-  .mg6 { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
-  .mg4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HT-BPDT | Gestión de Tripulación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .loader { border-top-color: #3498db; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-<div class="topbar">
-  <div class="topbar-left">
-    <div class="logo-pill">BPdT</div>
-    <div>
-      <div class="topbar-title">Dashboard de cumplimiento</div>
-      <div class="topbar-company">Mundo Logístico S.A.C.</div>
-    </div>
-  </div>
-  <div class="topbar-right">
-    <div class="topbar-date" id="fechaHoy"></div>
-    <div class="avatar">ML</div>
-  </div>
-</div>
-
-<div class="page">
-
-  <div class="alert-banner">
-    <div class="alert-icon">
-      <svg viewBox="0 0 12 12"><path d="M6 1L11 10H1L6 1Z"/><rect x="5.5" y="5" width="1" height="3" rx="0.5"/><rect x="5.5" y="8.5" width="1" height="1" rx="0.5"/></svg>
-    </div>
-    <div class="alert-text">
-      <strong>3 documentos vencidos hoy</strong> — Unidades B-044 y B-091 inhabilitadas para despacho. Regularice los documentos para reanudar operaciones.
-    </div>
-  </div>
-
-  <!-- KPIs -->
-  <div class="section-label mb-20">Cumplimiento global</div>
-  <div class="kpi-row mb-28">
-    <div class="kpi-main">
-      <div class="lbl">Cumplimiento global de flota</div>
-      <div class="pct">76%</div>
-      <div class="sub">38 de 50 documentos vigentes</div>
-      <div class="trend">↑ +4% vs mes anterior</div>
-    </div>
-    <div class="kpi-card">
-      <div class="lbl">Requisitos de unidad</div>
-      <div class="val" style="color:var(--green);">72%</div>
-      <div class="bar-bg"><div class="bar-fill" style="width:72%;background:var(--green);"></div></div>
-    </div>
-    <div class="kpi-card">
-      <div class="lbl">Requisitos de tripulación</div>
-      <div class="val" style="color:var(--amber);">68%</div>
-      <div class="bar-bg"><div class="bar-fill" style="width:68%;background:var(--amber);"></div></div>
-    </div>
-    <div class="kpi-card">
-      <div class="lbl">Documentos empresa</div>
-      <div class="val" style="color:var(--blue);">88%</div>
-      <div class="bar-bg"><div class="bar-fill" style="width:88%;background:var(--blue);"></div></div>
-    </div>
-  </div>
-
-  <!-- Charts -->
-  <div class="section-label mb-20">Análisis de cumplimiento</div>
-  <div class="charts-row mb-28">
-    <div class="chart-card">
-      <div class="chart-title">Brechas por pilar</div>
-      <div class="chart-sub">Documentos pendientes de regularizar</div>
-      <div class="canvas-wrap" style="height:165px;"><canvas id="donutChart"></canvas></div>
-      <div class="legend-row">
-        <span><span class="ldot" style="background:#1D9E75;"></span>Unidad (5)</span>
-        <span><span class="ldot" style="background:#BA7517;"></span>Tripulación (4)</span>
-        <span><span class="ldot" style="background:#185FA5;"></span>Empresa (3)</span>
-      </div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Vencimientos próximos 30 días</div>
-      <div class="chart-sub" id="barSubtitle"></div>
-      <div class="canvas-wrap" style="height:165px;"><canvas id="barChart"></canvas></div>
-      <div class="legend-row">
-        <span><span class="ldot" style="background:#E24B4A;"></span>Vencidos</span>
-        <span><span class="ldot" style="background:#EF9F27;"></span>Crítico ≤7d</span>
-        <span><span class="ldot" style="background:#639922;"></span>Por vencer</span>
-      </div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Tendencia de cumplimiento</div>
-      <div class="chart-sub">% global últimos 6 meses vs meta FAPE</div>
-      <div class="canvas-wrap" style="height:165px;"><canvas id="lineChart"></canvas></div>
-      <div class="legend-row">
-        <span><span class="ldot" style="background:#185FA5;border-radius:50%;"></span>% cumplimiento</span>
-        <span><span class="ldot" style="background:#E24B4A;border-radius:50%;"></span>Meta FAPE 90%</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Estado unidades, tripulación y empresa -->
-  <div class="section-label mb-20">Estado de unidades, tripulación y empresa</div>
-  <div class="panels-row-3 mb-28">
-
-    <div class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">Estado de unidades</div>
-          <div class="panel-sub">Top 10 con peor cumplimiento</div>
+    <div id="app-container" class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">SISTEMA HT-BPDT</h1>
+            <p class="text-gray-500 text-sm">Control de Cumplimiento Operativo</p>
         </div>
-        <button class="expand-btn" onclick="openModal('modalFlota')">Ver todas →</button>
-      </div>
-      <div class="hm5" id="flotaGrid"></div>
-      <div class="legend-row">
-        <span><span class="ldot" style="background:#EAF3DE;border:0.5px solid #9FE1CB;"></span>≥80%</span>
-        <span><span class="ldot" style="background:#FAEEDA;border:0.5px solid #FAC775;"></span>60–79%</span>
-        <span><span class="ldot" style="background:#FCEBEB;border:0.5px solid #F7C1C1;"></span>&lt;60%</span>
-      </div>
-    </div>
 
-    <div class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">Estado de tripulación</div>
-          <div class="panel-sub">Top 10 con peor cumplimiento</div>
+        <div id="view-login" class="space-y-4">
+            <h2 class="text-lg font-semibold text-center border-b pb-2">Iniciar Sesión</h2>
+            <input type="number" id="login-dni" placeholder="Ingrese su DNI" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <input type="password" id="login-pass" placeholder="Contraseña" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <button onclick="handleLogin()" id="btn-login" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition">INGRESAR</button>
+            <p class="text-center text-sm">¿No tienes cuenta? <a href="#" onclick="showView('register')" class="text-blue-600 font-bold">Regístrate aquí</a></p>
         </div>
-        <button class="expand-btn" onclick="openModal('modalTrip')">Ver todos →</button>
-      </div>
-      <div class="hm5" id="tripGrid"></div>
-      <div class="legend-row">
-        <span><span class="ldot" style="background:#EAF3DE;border:0.5px solid #9FE1CB;"></span>≥80%</span>
-        <span><span class="ldot" style="background:#FAEEDA;border:0.5px solid #FAC775;"></span>60–79%</span>
-        <span><span class="ldot" style="background:#FCEBEB;border:0.5px solid #F7C1C1;"></span>&lt;60%</span>
-      </div>
-    </div>
 
-    <div class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">Estado de empresa</div>
-          <div class="panel-sub">Documentos del sistema de calidad BPdT</div>
+        <div id="view-register" class="hidden space-y-4">
+            <h2 class="text-lg font-semibold text-center border-b pb-2">Registro de Tripulante</h2>
+            
+            <div id="reg-step-1">
+                <p class="text-xs text-gray-500 mb-1">Primero validaremos si tus datos ya existen:</p>
+                <div class="flex gap-2">
+                    <input type="number" id="reg-dni" placeholder="DNI" class="flex-1 p-3 border rounded-lg">
+                    <button onclick="handleCheckDni()" class="bg-gray-800 text-white px-4 rounded-lg">Validar</button>
+                </div>
+            </div>
+
+            <div id="reg-fields" class="hidden space-y-3 animate-pulse-once">
+                <input type="text" id="reg-nombres" placeholder="Nombres" class="w-full p-3 border rounded-lg bg-gray-50">
+                <input type="text" id="reg-apellidos" placeholder="Apellidos" class="w-full p-3 border rounded-lg bg-gray-50">
+                
+                <select id="reg-cargo" onchange="toggleFieldsByCargo()" class="w-full p-3 border rounded-lg">
+                    <option value="">Seleccione su Cargo</option>
+                    <option value="CONDUCTOR">CONDUCTOR</option>
+                    <option value="AUXILIAR">AUXILIAR</option>
+                </select>
+
+                <select id="reg-empresa" class="w-full p-3 border rounded-lg">
+                    <option value="">Cargando empresas...</option>
+                </select>
+
+                <input type="password" id="reg-pass" placeholder="Cree una contraseña" class="w-full p-3 border rounded-lg border-blue-300">
+
+                <div class="bg-blue-50 p-3 rounded-lg space-y-2">
+                    <p class="text-xs font-bold text-blue-800">Documentación Requerida:</p>
+                    <div>
+                        <label class="text-[10px] uppercase text-gray-500">Foto DNI (Frontal/Posterior)</label>
+                        <input type="file" id="file-dni" accept="image/*,application/pdf" class="text-xs">
+                    </div>
+                    <div id="box-licencia" class="hidden">
+                        <label class="text-[10px] uppercase text-gray-500">Licencia de Conducir</label>
+                        <input type="file" id="file-licencia" accept="image/*,application/pdf" class="text-xs">
+                    </div>
+                </div>
+
+                <button onclick="handleRegister()" id="btn-register" class="w-full bg-green-600 text-white p-3 rounded-lg font-bold hover:bg-green-700 transition">FINALIZAR REGISTRO</button>
+            </div>
+            
+            <button onclick="showView('login')" class="w-full text-gray-500 text-sm">Volver al inicio</button>
         </div>
-        <button class="expand-btn" onclick="openModal('modalEmpresa')">Ver todos →</button>
-      </div>
-      <div class="hm3" id="empresaGrid"></div>
-      <div class="legend-row">
-        <span><span class="ldot" style="background:#EAF3DE;border:0.5px solid #9FE1CB;"></span>Vigente</span>
-        <span><span class="ldot" style="background:#FAEEDA;border:0.5px solid #FAC775;"></span>Por vencer</span>
-        <span><span class="ldot" style="background:#FCEBEB;border:0.5px solid #F7C1C1;"></span>Vencido</span>
-      </div>
+
+        <div id="view-dashboard" class="hidden space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 class="font-bold text-gray-700">Mi Perfil</h2>
+                <button onclick="location.reload()" class="text-red-500 text-xs font-bold">Cerrar Sesión</button>
+            </div>
+            <div id="user-info" class="text-center py-4 bg-gray-50 rounded-lg">
+                </div>
+            <div id="compliance-status" class="p-4 rounded-lg text-center font-bold text-white">
+                </div>
+            <div class="text-xs text-gray-400 italic text-center">
+                * Los documentos subidos están sujetos a validación por el equipo BPDT.
+            </div>
+        </div>
+
+        <div id="loader" class="hidden fixed inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-50">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+            <p id="loader-text" class="text-sm font-semibold text-gray-600">Procesando...</p>
+        </div>
+
     </div>
-  </div>
 
-  <!-- Tabla -->
-  <div class="section-label mb-20">Registro documental</div>
-  <div class="table-section">
-    <div class="table-header">
-      <div>
-        <div class="chart-title">Todos los documentos</div>
-        <div class="chart-sub" style="margin-top:2px;">Use "Subir" para regularizar documentos faltantes o vencidos</div>
-      </div>
-      <div class="filter-tabs">
-        <button class="ftab active" onclick="filterTable('all',this)">Todos</button>
-        <button class="ftab" onclick="filterTable('vencido',this)">Vencidos</button>
-        <button class="ftab" onclick="filterTable('critico',this)">Críticos</button>
-        <button class="ftab" onclick="filterTable('por_vencer',this)">Por vencer</button>
-        <button class="ftab" onclick="filterTable('vigente',this)">Vigentes</button>
-      </div>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th style="width:15%">Unidad / Tripulante</th>
-          <th style="width:22%">Documento</th>
-          <th style="width:11%">Pilar</th>
-          <th style="width:12%">Vencimiento</th>
-          <th style="width:17%">Estado</th>
-          <th style="width:11%">Archivo</th>
-          <th style="width:12%">Acción</th>
-        </tr>
-      </thead>
-      <tbody id="docBody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Modal Unidades -->
-<div class="modal-backdrop" id="modalFlota">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <div class="modal-head-title">Todas las unidades — Mundo Logístico S.A.C.</div>
-        <div class="modal-head-sub">18 unidades activas · ordenadas de menor a mayor cumplimiento</div>
-      </div>
-      <button class="close-btn" onclick="closeModal('modalFlota')">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <div class="mg6" id="flotaGridFull"></div>
-      <div class="legend-row" style="margin-top:14px;">
-        <span><span class="ldot" style="background:#EAF3DE;border:0.5px solid #9FE1CB;"></span>≥80%</span>
-        <span><span class="ldot" style="background:#FAEEDA;border:0.5px solid #FAC775;"></span>60–79%</span>
-        <span><span class="ldot" style="background:#FCEBEB;border:0.5px solid #F7C1C1;"></span>&lt;60%</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Tripulación -->
-<div class="modal-backdrop" id="modalTrip">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <div class="modal-head-title">Toda la tripulación — Mundo Logístico S.A.C.</div>
-        <div class="modal-head-sub">22 tripulantes · ordenados de menor a mayor cumplimiento</div>
-      </div>
-      <button class="close-btn" onclick="closeModal('modalTrip')">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <div class="mg6" id="tripGridFull"></div>
-      <div class="legend-row" style="margin-top:14px;">
-        <span><span class="ldot" style="background:#EAF3DE;border:0.5px solid #9FE1CB;"></span>≥80%</span>
-        <span><span class="ldot" style="background:#FAEEDA;border:0.5px solid #FAC775;"></span>60–79%</span>
-        <span><span class="ldot" style="background:#FCEBEB;border:0.5px solid #F7C1C1;"></span>&lt;60%</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Empresa -->
-<div class="modal-backdrop" id="modalEmpresa">
-  <div class="modal">
-    <div class="modal-head">
-      <div>
-        <div class="modal-head-title">Documentos empresa — Mundo Logístico S.A.C.</div>
-        <div class="modal-head-sub">8 documentos del sistema de gestión de calidad BPdT</div>
-      </div>
-      <button class="close-btn" onclick="closeModal('modalEmpresa')">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <div class="mg4" id="empresaGridFull"></div>
-      <div class="legend-row" style="margin-top:14px;">
-        <span><span class="ldot" style="background:#EAF3DE;border:0.5px solid #9FE1CB;"></span>Vigente</span>
-        <span><span class="ldot" style="background:#FAEEDA;border:0.5px solid #FAC775;"></span>Por vencer</span>
-        <span><span class="ldot" style="background:#FCEBEB;border:0.5px solid #F7C1C1;"></span>Vencido</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-// ── FECHA HOY dinámica ──
-const HOY = new Date(); HOY.setHours(0,0,0,0);
-const MESES_LARGO = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const MESES_CORTO = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-document.getElementById('fechaHoy').textContent =
-  `${HOY.getDate()} de ${MESES_LARGO[HOY.getMonth()]} de ${HOY.getFullYear()}`;
-
-function fmtFecha(iso) {
-  const [y,m,d] = iso.split('-');
-  return `${d}-${m}-${String(y).slice(2)}`;
-}
-
-// ── DATA ──
-const flotaAll = [
-  {id:'B-044', tipo:'Refrigerado', pct:45}, {id:'D-011', tipo:'',            pct:48},
-  {id:'B-091', tipo:'Refrigerado', pct:52}, {id:'D-005', tipo:'',            pct:55},
-  {id:'C-007', tipo:'',            pct:58}, {id:'D-017', tipo:'Refrigerado', pct:63},
-  {id:'D-023', tipo:'',            pct:68}, {id:'B-033', tipo:'',            pct:67},
-  {id:'C-022', tipo:'Refrigerado', pct:71}, {id:'B-012', tipo:'',            pct:74},
-  {id:'B-003', tipo:'',            pct:79}, {id:'E-002', tipo:'Refrigerado', pct:77},
-  {id:'C-001', tipo:'',            pct:82}, {id:'E-008', tipo:'',            pct:80},
-  {id:'A-012', tipo:'Refrigerado', pct:85}, {id:'E-014', tipo:'',            pct:88},
-  {id:'A-001', tipo:'',            pct:91}, {id:'E-019', tipo:'Refrigerado', pct:93},
-].sort((a,b)=>a.pct-b.pct);
-
-const tripAll = [
-  {id:'J. Quispe',  rol:'Chofer', pct:42}, {id:'D. Espino',   rol:'Aux.',   pct:45},
-  {id:'F. Lara',    rol:'Chofer', pct:51}, {id:'M. Ramos',    rol:'Chofer', pct:55},
-  {id:'G. Ochoa',   rol:'Aux.',   pct:57}, {id:'C. Flores',   rol:'Aux.',   pct:60},
-  {id:'R. Mamani',  rol:'Aux.',   pct:63}, {id:'H. Paredes',  rol:'Chofer', pct:64},
-  {id:'I. Soto',    rol:'Aux.',   pct:66}, {id:'L. Torres',   rol:'Chofer', pct:68},
-  {id:'P. Vargas',  rol:'Aux.',   pct:70}, {id:'J. Aguilar',  rol:'Chofer', pct:72},
-  {id:'A. Gomez',   rol:'Chofer', pct:75}, {id:'K. Ñaupa',    rol:'Aux.',   pct:76},
-  {id:'S. Huanca',  rol:'Chofer', pct:79}, {id:'L. Diaz',     rol:'Chofer', pct:80},
-  {id:'K. Bravo',   rol:'Aux.',   pct:82}, {id:'M. Estrada',  rol:'Aux.',   pct:84},
-  {id:'N. Fuentes', rol:'Chofer', pct:87}, {id:'N. Castro',   rol:'Chofer', pct:88},
-  {id:'O. Guerrero',rol:'Aux.',   pct:90}, {id:'P. Herrera',  rol:'Chofer', pct:94},
-].sort((a,b)=>a.pct-b.pct);
-
-// Días relativos a HOY para empresa
-function diasDesdeHoy(iso) {
-  const v = new Date(iso); v.setHours(0,0,0,0);
-  return Math.round((v - HOY) / 86400000);
-}
-const empresaDocs = [
-  {id:'Manual BPdT',       venc:'2026-03-19'},
-  {id:'Pol. Calidad',      venc:'2026-04-15'},
-  {id:'Organigrama',       venc:'2026-04-22'},
-  {id:'Pol. SSOMA',        venc:'2026-06-30'},
-  {id:'Plan Contingencia', venc:'2026-08-01'},
-  {id:'Proc. Carga',       venc:'2026-09-15'},
-  {id:'Reg. Capacitac.',   venc:'2026-11-01'},
-  {id:'Cert. ISO',         venc:'2026-12-20'},
-].map(e => {
-  const d = diasDesdeHoy(e.venc);
-  const est = d < 0 ? 'vencido' : d <= 30 ? 'por_vencer' : 'vigente';
-  return {...e, dias:d, estado:est};
-}).sort((a,b)=>a.dias-b.dias);
-
-const docs = [
-  {entity:'B-044',     doc:'SOAT',               pilar:'Unidad',      venc:'2026-03-22', estado:'vencido',    archivo:null},
-  {entity:'B-091',     doc:'Revisión Técnica',    pilar:'Unidad',      venc:'2026-03-23', estado:'vencido',    archivo:null},
-  {entity:'Empresa',   doc:'Manual BPdT',         pilar:'Empresa',     venc:'2026-03-19', estado:'vencido',    archivo:null},
-  {entity:'J. Quispe', doc:'SCTR',                pilar:'Tripulación', venc:'2026-03-27', estado:'critico',    archivo:null},
-  {entity:'A-012',     doc:'Cert. Fumigación',    pilar:'Unidad',      venc:'2026-03-29', estado:'critico',    archivo:null},
-  {entity:'M. Ramos',  doc:'Licencia B-IIb',      pilar:'Tripulación', venc:'2026-03-31', estado:'critico',    archivo:null},
-  {entity:'Empresa',   doc:'Política de Calidad', pilar:'Empresa',     venc:'2026-04-15', estado:'por_vencer', archivo:'politica_v3.pdf'},
-  {entity:'B-044',     doc:'Permiso MTC',          pilar:'Unidad',      venc:'2026-04-20', estado:'por_vencer', archivo:'mtc_b044.pdf'},
-  {entity:'C. Flores', doc:'Carnet de Sanidad',   pilar:'Tripulación', venc:'2026-05-01', estado:'por_vencer', archivo:null},
-  {entity:'B-012',     doc:'Tarjeta de Propiedad',pilar:'Unidad',      venc:'2026-09-10', estado:'vigente',    archivo:'prop_b012.pdf'},
-  {entity:'Empresa',   doc:'Organigrama',          pilar:'Empresa',     venc:'2026-12-31', estado:'vigente',    archivo:'org_2026.pdf'},
-  {entity:'L. Torres', doc:'DNI',                 pilar:'Tripulación', venc:'2027-01-15', estado:'vigente',    archivo:'dni_torres.pdf'},
-  {entity:'B-091',     doc:'Tarjeta de Propiedad',pilar:'Unidad',      venc:'2027-06-30', estado:'vigente',    archivo:'prop_b091.pdf'},
-];
-
-// ── HELPERS ──
-function heatClass(pct)  { return pct>=80?'heat-green':pct>=60?'heat-amber':'heat-red'; }
-function eClass(est)     { return est==='vencido'?'heat-red':est==='por_vencer'?'heat-amber':'heat-green'; }
-function diasLabel(d)    { return d<0?`Venc. hace ${Math.abs(d)}d`:d===0?'Vence hoy':`Vence en ${d}d`; }
-
-// ── CELLS ──
-function flotaCell(u) {
-  return `<div class="heat-cell ${heatClass(u.pct)}" title="${u.id}: ${u.pct}% · ${u.tipo||'Estándar'}">
-    <div class="cell-id">${u.id}</div>
-    <div class="cell-pct">${u.pct}%</div>
-    <div class="cell-sub">${u.tipo||'&nbsp;'}</div>
-  </div>`;
-}
-function tripCell(t) {
-  return `<div class="heat-cell ${heatClass(t.pct)}" title="${t.id} · ${t.rol}: ${t.pct}%">
-    <div class="cell-id">${t.id}</div>
-    <div class="cell-pct">${t.pct}%</div>
-    <div class="cell-sub">${t.rol}</div>
-  </div>`;
-}
-function empresaCell(e) {
-  return `<div class="heat-cell ${eClass(e.estado)}" title="${e.id}: ${diasLabel(e.dias)}">
-    <div class="cell-id" style="font-size:9.5px;">${e.id}</div>
-    <div class="cell-pct" style="font-size:10px;">${diasLabel(e.dias)}</div>
-    <div class="cell-sub">${fmtFecha(e.venc)}</div>
-  </div>`;
-}
-
-// ── FILL ──
-document.getElementById('flotaGrid').innerHTML      = flotaAll.slice(0,10).map(flotaCell).join('');
-document.getElementById('tripGrid').innerHTML       = tripAll.slice(0,10).map(tripCell).join('');
-document.getElementById('empresaGrid').innerHTML    = empresaDocs.slice(0,6).map(empresaCell).join('');
-document.getElementById('flotaGridFull').innerHTML  = flotaAll.map(flotaCell).join('');
-document.getElementById('tripGridFull').innerHTML   = tripAll.map(tripCell).join('');
-document.getElementById('empresaGridFull').innerHTML= empresaDocs.map(empresaCell).join('');
-
-// ── MODAL ──
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.addEventListener('keydown', e => {
-  if (e.key==='Escape') document.querySelectorAll('.modal-backdrop.open').forEach(m=>m.classList.remove('open'));
-});
-document.querySelectorAll('.modal-backdrop').forEach(m => {
-  m.addEventListener('click', e => { if (e.target===m) m.classList.remove('open'); });
-});
-
-// ── TABLE ──
-const pilarBadge = {'Unidad':'b-green','Tripulación':'b-amber','Empresa':'b-blue'};
-const estadoMap  = {vencido:{cls:'b-red'},critico:{cls:'b-amber'},por_vencer:{cls:'b-yellow'},vigente:{cls:'b-green'}};
-
-function estadoLabel(d) {
-  const n = diasDesdeHoy(d.venc);
-  if (d.estado==='vencido')    return `Venció hace ${Math.abs(n)} día${Math.abs(n)!==1?'s':''}`;
-  if (d.estado==='critico')    return `Vence en ${n} día${n!==1?'s':''}`;
-  if (d.estado==='por_vencer') return `Vence en ${n} días`;
-  return 'Vigente';
-}
-function renderTable(filter) {
-  const rows = filter==='all' ? docs : docs.filter(d=>d.estado===filter);
-  document.getElementById('docBody').innerHTML = rows.map(d => {
-    const em = estadoMap[d.estado];
-    const pb = pilarBadge[d.pilar]||'b-gray';
-    const arch = d.archivo
-      ? `<span class="view-link">Ver doc.</span>`
-      : `<span style="font-size:11px;color:var(--text-tertiary);">Sin archivo</span>`;
-    const btn = (d.estado==='vigente'&&d.archivo)
-      ? `<button class="upload-btn disabled">Subir</button>`
-      : `<button class="upload-btn" onclick="handleUpload('${d.entity}','${d.doc}')">↑ Subir</button>`;
-    return `<tr data-estado="${d.estado}">
-      <td style="font-weight:500;">${d.entity}</td>
-      <td>${d.doc}</td>
-      <td><span class="badge ${pb}">${d.pilar}</span></td>
-      <td style="font-size:12px;">${fmtFecha(d.venc)}</td>
-      <td><span class="badge ${em.cls}">${estadoLabel(d)}</span></td>
-      <td>${arch}</td><td>${btn}</td>
-    </tr>`;
-  }).join('');
-}
-function filterTable(f,el) {
-  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active'); renderTable(f);
-}
-function handleUpload(entity, doc) {
-  const input = document.createElement('input');
-  input.type='file'; input.accept='application/pdf,image/*';
-  input.onchange = () => {
-    if (input.files[0]) alert(`Archivo "${input.files[0].name}" cargado para ${entity} — ${doc}.\nEn producción se enviará a Google Drive automáticamente.`);
-  };
-  input.click();
-}
-renderTable('all');
-
-// ── CHART subtítulo dinámico ──
-const fin30 = new Date(HOY); fin30.setDate(fin30.getDate()+30);
-const fmt = dt => `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}/${String(dt.getFullYear()).slice(2)}`;
-document.getElementById('barSubtitle').textContent = `${fmt(HOY)} → ${fmt(fin30)}`;
-
-// Semanas dinámicas desde hoy
-function weekLabel(offset) {
-  const d1 = new Date(HOY); d1.setDate(d1.getDate()+offset*7);
-  const d2 = new Date(d1);  d2.setDate(d2.getDate()+6);
-  return `${d1.getDate()}/${d1.getMonth()+1}–${d2.getDate()}/${d2.getMonth()+1}`;
-}
-
-new Chart(document.getElementById('donutChart'), {
-  type:'doughnut',
-  data:{ labels:['Unidad','Tripulación','Empresa'], datasets:[{data:[5,4,3],backgroundColor:['#1D9E75','#BA7517','#185FA5'],borderWidth:0,hoverOffset:4}] },
-  options:{ responsive:true, maintainAspectRatio:false, cutout:'68%', plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} docs`}}} }
-});
-
-new Chart(document.getElementById('barChart'), {
-  type:'bar',
-  data:{
-    labels:[weekLabel(0),weekLabel(1),weekLabel(2),weekLabel(3)],
-    datasets:[
-      {label:'Vencidos',     data:[3,0,0,0], backgroundColor:'#E24B4A', borderRadius:3},
-      {label:'Críticos ≤7d', data:[0,2,1,0], backgroundColor:'#EF9F27', borderRadius:3},
-      {label:'Por vencer',   data:[0,1,2,3], backgroundColor:'#639922', borderRadius:3},
-    ]
-  },
-  options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-    scales:{
-      x:{stacked:true,grid:{display:false},ticks:{font:{size:10},color:'#888780'}},
-      y:{stacked:true,beginAtZero:true,grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10},color:'#888780',stepSize:1}}
-    }, barPercentage:0.55 }
-});
-
-new Chart(document.getElementById('lineChart'), {
-  type:'line',
-  data:{
-    labels:['Oct','Nov','Dic','Ene','Feb','Mar'],
-    datasets:[
-      {label:'% cumplimiento',data:[62,65,70,70,72,76],borderColor:'#185FA5',backgroundColor:'rgba(24,95,165,0.08)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#185FA5',borderWidth:2},
-      {label:'Meta FAPE 90%', data:[90,90,90,90,90,90],borderColor:'#E24B4A',borderDash:[5,4],pointRadius:0,borderWidth:1.5,fill:false},
-    ]
-  },
-  options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-    scales:{
-      x:{grid:{display:false},ticks:{font:{size:10},color:'#888780'}},
-      y:{min:50,max:100,grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10},color:'#888780',callback:v=>v+'%'}}
-    } }
-});
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
