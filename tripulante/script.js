@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbw23m-TN4n_Ytx4TO5eqs89Kh8d13p9uceVb663AnpWcSeX7S7LlZlsfueVbUAyYlU/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxqAa53M6IWarPXN3lpgYDQWShILIFYr0mkLCDfklbVQOYcUPGLvdJ8eKlR1gH-HCn8XA/exec";
 
 // --- NAVEGACIÓN ---
 function showView(viewName) {
