@@ -1,361 +1,98 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HT-BPDT | Tripulante</title>
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
-  <style>
-    :root {
-      --blue: #185FA5;
-      --green: #1D9E75;
-      --red: #A32D2D;
-      --bg: #F5F4F0;
-    }
-    
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      margin: 0;
-      padding: 0;
-      color: #1A1A18;
-    }
-    
-    .app-container {
-      max-width: 480px;
-      margin: 0 auto;
-      background: white;
-      min-height: 100vh;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    }
-    
-    .header {
-      padding: 32px 24px 20px;
-      text-align: center;
-      background: white;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .header h1 {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .tab-btn {
-      flex: 1;
-      padding: 16px;
-      background: none;
-      border: none;
-      font-weight: 500;
-      color: #666;
-      cursor: pointer;
-    }
-    
-    .tab-btn.active {
-      color: var(--blue);
-      border-bottom: 3px solid var(--blue);
-    }
-    
-    .form-wrapper {
-      padding: 24px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #666;
-      margin-bottom: 6px;
-      display: block;
-    }
-    
-    .input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-    
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 500;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    
-    .btn-primary { background: var(--blue); color: white; }
-    .btn-success { background: var(--green); color: white; }
-    
-    .hidden { display: none !important; }
-    
-    .status {
-      font-size: 13px;
-      margin-top: 6px;
-      padding: 8px;
-      border-radius: 6px;
-    }
-    
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 12px 20px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 500;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HT-BPDT | Gestión de Tripulación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .loader { border-top-color: #3498db; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-<div class="app-container">
-
-  <!-- AUTH SCREEN -->
-  <div id="authScreen">
-    <div class="header">
-      <h1>HT-BPDT</h1>
-      <p style="color:#666; margin-top:4px;">Control Documental de Transporte</p>
-      <div style="margin-top:12px; background:#E6F1FB; color:var(--blue); display:inline-block; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600;">
-        Portal Tripulante
-      </div>
-    </div>
-
-    <div class="tabs">
-      <button onclick="switchTab(0)" id="tabLogin" class="tab-btn active">Iniciar Sesión</button>
-      <button onclick="switchTab(1)" id="tabRegister" class="tab-btn">Crear Cuenta</button>
-    </div>
-
-    <!-- LOGIN FORM -->
-    <div id="loginForm" class="form-wrapper">
-      <div class="form-group">
-        <div class="label">DNI (8 dígitos)</div>
-        <input id="loginDni" type="text" maxlength="8" class="input" placeholder="16528921">
-      </div>
-      <div class="form-group">
-        <div class="label">Contraseña</div>
-        <input id="loginPass" type="password" class="input" placeholder="Últimos 4 dígitos del DNI">
-      </div>
-      <button onclick="doLogin()" class="btn btn-primary">Ingresar</button>
-    </div>
-
-    <!-- REGISTER FORM -->
-    <div id="registerForm" class="form-wrapper hidden">
-      <div id="debugInfo" class="status" style="background:#FEE; color:var(--red); display:none;"></div>
-
-      <div class="form-group">
-        <div class="label">DNI</div>
-        <input id="regDni" type="text" maxlength="8" oninput="if(this.value.length===8) checkDniAutoFill()" class="input" placeholder="12345678">
-      </div>
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-        <div class="form-group">
-          <div class="label">Nombres</div>
-          <input id="regNames" type="text" class="input">
+    <div id="app-container" class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">SISTEMA HT-BPDT</h1>
+            <p class="text-gray-500 text-sm">Control de Cumplimiento Operativo</p>
         </div>
-        <div class="form-group">
-          <div class="label">Apellidos</div>
-          <input id="regApellidos" type="text" class="input">
+
+        <div id="view-login" class="space-y-4">
+            <h2 class="text-lg font-semibold text-center border-b pb-2">Iniciar Sesión</h2>
+            <input type="number" id="login-dni" placeholder="Ingrese su DNI" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <input type="password" id="login-pass" placeholder="Contraseña" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <button onclick="handleLogin()" id="btn-login" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition">INGRESAR</button>
+            <p class="text-center text-sm">¿No tienes cuenta? <a href="#" onclick="showView('register')" class="text-blue-600 font-bold">Regístrate aquí</a></p>
         </div>
-      </div>
 
-      <div class="form-group">
-        <div class="label">Empresa</div>
-        <select id="regEmpresa" class="input">
-          <option value="">Cargando empresas...</option>
-        </select>
-        <p id="empresaStatus" class="status" style="background:#f0f0f0;"></p>
-      </div>
+        <div id="view-register" class="hidden space-y-4">
+            <h2 class="text-lg font-semibold text-center border-b pb-2">Registro de Tripulante</h2>
+            
+            <div id="reg-step-1">
+                <p class="text-xs text-gray-500 mb-1">Primero validaremos si tus datos ya existen:</p>
+                <div class="flex gap-2">
+                    <input type="number" id="reg-dni" placeholder="DNI" class="flex-1 p-3 border rounded-lg">
+                    <button onclick="handleCheckDni()" class="bg-gray-800 text-white px-4 rounded-lg">Validar</button>
+                </div>
+            </div>
 
-      <div class="form-group">
-        <div class="label">Cargo</div>
-        <select id="regCargo" class="input">
-          <option value="AUXILIAR">Auxiliar</option>
-          <option value="CONDUCTOR">Conductor</option>
-        </select>
-      </div>
+            <div id="reg-fields" class="hidden space-y-3 animate-pulse-once">
+                <input type="text" id="reg-nombres" placeholder="Nombres" class="w-full p-3 border rounded-lg bg-gray-50">
+                <input type="text" id="reg-apellidos" placeholder="Apellidos" class="w-full p-3 border rounded-lg bg-gray-50">
+                
+                <select id="reg-cargo" onchange="toggleFieldsByCargo()" class="w-full p-3 border rounded-lg">
+                    <option value="">Seleccione su Cargo</option>
+                    <option value="CONDUCTOR">CONDUCTOR</option>
+                    <option value="AUXILIAR">AUXILIAR</option>
+                </select>
 
-      <button onclick="doRegister()" class="btn btn-success">Crear Cuenta</button>
+                <select id="reg-empresa" class="w-full p-3 border rounded-lg">
+                    <option value="">Cargando empresas...</option>
+                </select>
+
+                <input type="password" id="reg-pass" placeholder="Cree una contraseña" class="w-full p-3 border rounded-lg border-blue-300">
+
+                <div class="bg-blue-50 p-3 rounded-lg space-y-2">
+                    <p class="text-xs font-bold text-blue-800">Documentación Requerida:</p>
+                    <div>
+                        <label class="text-[10px] uppercase text-gray-500">Foto DNI (Frontal/Posterior)</label>
+                        <input type="file" id="file-dni" accept="image/*,application/pdf" class="text-xs">
+                    </div>
+                    <div id="box-licencia" class="hidden">
+                        <label class="text-[10px] uppercase text-gray-500">Licencia de Conducir</label>
+                        <input type="file" id="file-licencia" accept="image/*,application/pdf" class="text-xs">
+                    </div>
+                </div>
+
+                <button onclick="handleRegister()" id="btn-register" class="w-full bg-green-600 text-white p-3 rounded-lg font-bold hover:bg-green-700 transition">FINALIZAR REGISTRO</button>
+            </div>
+            
+            <button onclick="showView('login')" class="w-full text-gray-500 text-sm">Volver al inicio</button>
+        </div>
+
+        <div id="view-dashboard" class="hidden space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 class="font-bold text-gray-700">Mi Perfil</h2>
+                <button onclick="location.reload()" class="text-red-500 text-xs font-bold">Cerrar Sesión</button>
+            </div>
+            <div id="user-info" class="text-center py-4 bg-gray-50 rounded-lg">
+                </div>
+            <div id="compliance-status" class="p-4 rounded-lg text-center font-bold text-white">
+                </div>
+            <div class="text-xs text-gray-400 italic text-center">
+                * Los documentos subidos están sujetos a validación por el equipo BPDT.
+            </div>
+        </div>
+
+        <div id="loader" class="hidden fixed inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-50">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+            <p id="loader-text" class="text-sm font-semibold text-gray-600">Procesando...</p>
+        </div>
+
     </div>
-  </div>
 
-  <!-- DASHBOARD -->
-  <div id="dashScreen" class="hidden" style="padding:24px; text-align:center;">
-    <h2 id="dashNombre" style="margin-bottom:8px;">Bienvenido</h2>
-    <p id="dashCargo" style="color:#666;"></p>
-  </div>
-
-  <!-- TOAST -->
-  <div id="toast" class="toast hidden"></div>
-</div>
-
-<!-- CARGAR api.js DESDE LA RAÍZ -->
-<script src="../api.js"></script>
-
-<script>
-// ==================== VERIFICACIÓN DE api.js ====================
-function checkApiReady() {
-  if (typeof window.API === 'undefined' || typeof window.API.callBackend !== 'function') {
-    const debug = document.getElementById("debugInfo");
-    debug.innerHTML = `<strong>Error:</strong> No se pudo cargar api.js<br>
-                       Asegúrate que el archivo <code>api.js</code> esté en la raíz del repositorio.`;
-    debug.style.display = 'block';
-    console.error("❌ api.js no se cargó correctamente");
-    return false;
-  }
-  console.log("✅ api.js cargado correctamente");
-  return true;
-}
-
-// ==================== LLAMADA AL BACKEND ====================
-async function callBackend(action, payload = {}) {
-  if (!checkApiReady()) throw new Error("api.js no está cargado");
-  
-  try {
-    console.log(`→ Enviando: ${action}`);
-    const result = await window.API.callBackend(action, payload);
-    return result;
-  } catch (err) {
-    console.error(`Error en ${action}:`, err);
-    showToast(err.message || "Error de conexión", "error");
-    throw err;
-  }
-}
-
-// ==================== TABS ====================
-function switchTab(n) {
-  document.getElementById("loginForm").classList.toggle("hidden", n === 1);
-  document.getElementById("registerForm").classList.toggle("hidden", n === 0);
-  document.getElementById("tabLogin").classList.toggle("active", n === 0);
-  document.getElementById("tabRegister").classList.toggle("active", n === 1);
-}
-
-// ==================== LOGIN ====================
-async function doLogin() {
-  const dni = document.getElementById("loginDni").value.trim();
-  const pass = document.getElementById("loginPass").value.trim();
-  
-  if (!dni || dni.length !== 8) return showToast("Ingresa un DNI válido", "error");
-
-  try {
-    const data = await callBackend("LOGIN", { username: dni, password: pass });
-    currentUser = data;
-    localStorage.setItem("bpdt_tripulante", JSON.stringify(data));
-    showDashboard();
-  } catch (e) {
-    showToast(e.message, "error");
-  }
-}
-
-// ==================== AUTO FILL DNI ====================
-async function checkDniAutoFill() {
-  const dni = document.getElementById("regDni").value.trim();
-  if (dni.length !== 8) return;
-
-  try {
-    const res = await callBackend("CONSULTAR_DNI_REGISTRO", { dni });
-    if (res.tiene_cuenta) {
-      showToast("Este DNI ya tiene cuenta registrada", "error");
-      switchTab(0);
-      return;
-    }
-    if (res.found) {
-      document.getElementById("regNames").value = res.nombres || "";
-      document.getElementById("regApellidos").value = res.apellidos || "";
-      document.getElementById("regEmpresa").value = res.empresaId || "";
-      document.getElementById("regCargo").value = res.cargo || "AUXILIAR";
-    }
-  } catch (e) {}
-}
-
-// ==================== REGISTRO ====================
-async function doRegister() {
-  const dni = document.getElementById("regDni").value.trim();
-  const nombres = document.getElementById("regNames").value.trim();
-  const apellidos = document.getElementById("regApellidos").value.trim();
-  const empresaId = document.getElementById("regEmpresa").value;
-  const cargo = document.getElementById("regCargo").value;
-
-  if (!dni || dni.length !== 8) return showToast("DNI inválido", "error");
-  if (!nombres || !apellidos) return showToast("Completa nombres y apellidos", "error");
-  if (!empresaId) return showToast("Selecciona una empresa", "error");
-
-  try {
-    const params = { dni, nombres, apellidos, empresa_id: empresaId, cargo };
-    const result = await callBackend("REGISTER_TRIPULANTE", params);
-    showToast(result.mensaje || "Cuenta creada correctamente", "success");
-    switchTab(0); // Volver a login
-  } catch (e) {
-    showToast(e.message, "error");
-  }
-}
-
-// ==================== DASHBOARD ====================
-let currentUser = null;
-function showDashboard() {
-  document.getElementById("authScreen").classList.add("hidden");
-  document.getElementById("dashScreen").classList.remove("hidden");
-  document.getElementById("dashNombre").textContent = currentUser.nombre || "Usuario";
-}
-
-// ==================== TOAST ====================
-function showToast(msg, type = "success") {
-  const toast = document.getElementById("toast");
-  toast.textContent = msg;
-  toast.style.backgroundColor = type === "success" ? "#1D9E75" : "#A32D2D";
-  toast.classList.remove("hidden");
-  setTimeout(() => toast.classList.add("hidden"), 3500);
-}
-
-// ==================== INIT ====================
-async function init() {
-  console.log("🚀 Iniciando Tripulante App...");
-  
-  if (!checkApiReady()) return;
-
-  try {
-    const empresas = await callBackend("GET_LISTA_EMPRESAS");
-    console.log("✅ Empresas recibidas:", empresas);
-
-    const sel = document.getElementById("regEmpresa");
-    sel.innerHTML = '<option value="">Selecciona empresa...</option>';
-
-    if (empresas && empresas.length > 0) {
-      empresas.forEach(e => {
-        const opt = document.createElement("option");
-        opt.value = e.id;
-        opt.textContent = e.nombre;
-        sel.appendChild(opt);
-      });
-      document.getElementById("empresaStatus").innerHTML = `✓ ${empresas.length} empresas cargadas`;
-      document.getElementById("empresaStatus").style.backgroundColor = "#E6F1FB";
-    } else {
-      document.getElementById("empresaStatus").innerHTML = `⚠ No se encontraron empresas activas`;
-    }
-  } catch (e) {
-    console.error("❌ Error al cargar empresas:", e);
-    document.getElementById("empresaStatus").innerHTML = `✗ Error al cargar empresas: ${e.message}`;
-  }
-}
-
-window.onload = init;
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
