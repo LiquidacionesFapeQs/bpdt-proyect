@@ -3,92 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HT-BPDT | Gestión de Tripulación</title>
+    <title>HT-BPDT | Portal Tripulación</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .loader { border-top-color: #3498db; animation: spinner 1.5s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <div id="app-container" class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+    <div id="app-container" class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md border border-slate-200">
         
-        <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-800">SISTEMA HT-BPDT</h1>
-            <p class="text-gray-500 text-sm">Control de Cumplimiento Operativo</p>
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">HT-BPDT</h1>
+            <p class="text-slate-500 text-xs font-medium uppercase tracking-widest">Módulo de Registro y Control</p>
         </div>
 
-        <div id="view-login" class="space-y-4">
-            <h2 class="text-lg font-semibold text-center border-b pb-2">Iniciar Sesión</h2>
-            <input type="number" id="login-dni" placeholder="Ingrese su DNI" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-            <input type="password" id="login-pass" placeholder="Contraseña" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-            <button onclick="handleLogin()" id="btn-login" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition">INGRESAR</button>
-            <p class="text-center text-sm">¿No tienes cuenta? <a href="#" onclick="showView('register')" class="text-blue-600 font-bold">Regístrate aquí</a></p>
+        <div id="view-login" class="space-y-4 animate-fade-in">
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-600 ml-1">DNI</label>
+                <input type="number" id="login-dni" placeholder="00000000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            </div>
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-600 ml-1">CONTRASEÑA</label>
+                <input type="password" id="login-pass" placeholder="••••" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            </div>
+            <button onclick="handleLogin()" class="w-full bg-slate-900 text-white p-4 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-lg">INGRESAR</button>
+            <p class="text-center text-sm text-slate-500">¿Eres nuevo? <a href="#" onclick="showView('register')" class="text-blue-600 font-bold hover:underline">Crea tu cuenta aquí</a></p>
         </div>
 
-        <div id="view-register" class="hidden space-y-4">
-            <h2 class="text-lg font-semibold text-center border-b pb-2">Registro de Tripulante</h2>
+        <div id="view-register" class="hidden space-y-4 animate-fade-in">
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest text-center">Registro de Usuario</h2>
             
-            <div id="reg-step-1">
-                <p class="text-xs text-gray-500 mb-1">Primero validaremos si tus datos ya existen:</p>
+            <div id="reg-step-1" class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <label class="text-xs font-bold text-blue-700 block mb-2">VALIDA TU DNI</label>
                 <div class="flex gap-2">
-                    <input type="number" id="reg-dni" placeholder="DNI" class="flex-1 p-3 border rounded-lg">
-                    <button onclick="handleCheckDni()" class="bg-gray-800 text-white px-4 rounded-lg">Validar</button>
+                    <input type="number" id="reg-dni" placeholder="DNI" class="flex-1 p-3 border-none rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    <button onclick="handleCheckDni()" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition">Verificar</button>
                 </div>
             </div>
 
-            <div id="reg-fields" class="hidden space-y-3 animate-pulse-once">
-                <input type="text" id="reg-nombres" placeholder="Nombres" class="w-full p-3 border rounded-lg bg-gray-50">
-                <input type="text" id="reg-apellidos" placeholder="Apellidos" class="w-full p-3 border rounded-lg bg-gray-50">
-                
-                <select id="reg-cargo" onchange="toggleFieldsByCargo()" class="w-full p-3 border rounded-lg">
-                    <option value="">Seleccione su Cargo</option>
+            <div id="reg-fields" class="hidden space-y-4">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="reg-nombres" placeholder="Nombres" class="p-3 bg-slate-50 border rounded-xl text-sm">
+                    <input type="text" id="reg-apellidos" placeholder="Apellidos" class="p-3 bg-slate-50 border rounded-xl text-sm">
+                </div>
+
+                <select id="reg-cargo" onchange="toggleFieldsByCargo()" class="w-full p-3 bg-slate-50 border rounded-xl text-sm font-medium">
+                    <option value="">Seleccione Cargo</option>
                     <option value="CONDUCTOR">CONDUCTOR</option>
                     <option value="AUXILIAR">AUXILIAR</option>
                 </select>
 
-                <select id="reg-empresa" class="w-full p-3 border rounded-lg">
+                <select id="reg-empresa" class="w-full p-3 bg-slate-50 border rounded-xl text-sm font-medium">
                     <option value="">Cargando empresas...</option>
                 </select>
 
-                <input type="password" id="reg-pass" placeholder="Cree una contraseña" class="w-full p-3 border rounded-lg border-blue-300">
-
-                <div class="bg-blue-50 p-3 rounded-lg space-y-2">
-                    <p class="text-xs font-bold text-blue-800">Documentación Requerida:</p>
-                    <div>
-                        <label class="text-[10px] uppercase text-gray-500">Foto DNI (Frontal/Posterior)</label>
-                        <input type="file" id="file-dni" accept="image/*,application/pdf" class="text-xs">
+                <div class="space-y-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="text-[10px] font-black text-slate-400 uppercase">Documentación Obligatoria</p>
+                    
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Foto DNI:</label>
+                        <input type="file" id="file-dni" accept="image/*,application/pdf" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <label class="text-[10px] text-slate-500">Fecha de Vencimiento DNI:</label>
+                        <input type="date" id="venc-dni" class="w-full p-2 text-sm border rounded-lg">
                     </div>
-                    <div id="box-licencia" class="hidden">
-                        <label class="text-[10px] uppercase text-gray-500">Licencia de Conducir</label>
-                        <input type="file" id="file-licencia" accept="image/*,application/pdf" class="text-xs">
+
+                    <div id="box-licencia" class="hidden space-y-1 border-t pt-2">
+                        <label class="text-xs font-bold text-slate-700">Foto Licencia:</label>
+                        <input type="file" id="file-licencia" accept="image/*,application/pdf" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                        <label class="text-[10px] text-slate-500">Fecha de Vencimiento Licencia:</label>
+                        <input type="date" id="venc-licencia" class="w-full p-2 text-sm border rounded-lg">
                     </div>
                 </div>
 
-                <button onclick="handleRegister()" id="btn-register" class="w-full bg-green-600 text-white p-3 rounded-lg font-bold hover:bg-green-700 transition">FINALIZAR REGISTRO</button>
+                <div class="p-3 bg-amber-50 rounded-lg border border-amber-100">
+                    <p class="text-[10px] text-amber-700 leading-tight"><b>Nota:</b> Tu contraseña de acceso serán los <b>últimos 4 dígitos de tu DNI</b>.</p>
+                </div>
+
+                <button onclick="handleRegister()" id="btn-register" class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-all">FINALIZAR REGISTRO</button>
             </div>
             
-            <button onclick="showView('login')" class="w-full text-gray-500 text-sm">Volver al inicio</button>
+            <button onclick="showView('login')" class="w-full text-slate-400 text-xs font-bold hover:text-slate-600">VOLVER AL LOGIN</button>
         </div>
 
-        <div id="view-dashboard" class="hidden space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h2 class="font-bold text-gray-700">Mi Perfil</h2>
-                <button onclick="location.reload()" class="text-red-500 text-xs font-bold">Cerrar Sesión</button>
+        <div id="view-dashboard" class="hidden space-y-6 animate-fade-in text-center">
+            <div id="user-info" class="p-4 bg-slate-50 rounded-2xl border border-slate-100"></div>
+            <div id="compliance-card" class="p-6 rounded-2xl text-white shadow-lg">
+                <p class="text-xs opacity-80 uppercase tracking-widest mb-1">Estado de Cumplimiento</p>
+                <h3 id="compliance-pct" class="text-4xl font-black">0%</h3>
+                <p id="compliance-label" class="text-sm font-bold mt-1"></p>
             </div>
-            <div id="user-info" class="text-center py-4 bg-gray-50 rounded-lg">
-                </div>
-            <div id="compliance-status" class="p-4 rounded-lg text-center font-bold text-white">
-                </div>
-            <div class="text-xs text-gray-400 italic text-center">
-                * Los documentos subidos están sujetos a validación por el equipo BPDT.
-            </div>
+            <button onclick="location.reload()" class="w-full py-3 text-slate-400 text-xs font-bold border-t">CERRAR SESIÓN</button>
         </div>
 
-        <div id="loader" class="hidden fixed inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center z-50">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-            <p id="loader-text" class="text-sm font-semibold text-gray-600">Procesando...</p>
+        <div id="loader" class="hidden fixed inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center z-50">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-200 h-14 w-14 mb-4"></div>
+            <p id="loader-text" class="text-sm font-bold text-slate-600 animate-pulse">Cargando...</p>
         </div>
 
     </div>
