@@ -59,7 +59,8 @@ async function handleRegister() {
         apellidos: document.getElementById('reg-apellidos').value,
         cargo: document.getElementById('reg-cargo').value,
         empresa: document.getElementById('reg-empresa').value,
-        password: document.getElementById('reg-pass').value
+        vencDni: document.getElementById('venc-dni').value,
+        vencLicencia: document.getElementById('venc-licencia').value
     };
 
     if(!payload.password) return alert("Debe crear una contraseña");
