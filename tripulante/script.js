@@ -67,13 +67,12 @@ async function handleRegister() {
         password: autoPass 
     };
 
-    // Validaciones de campos obligatorios
+    // 1. Validaciones (Campos y Fechas)
     if(!payload.dni || payload.dni.length < 8) return alert("DNI no válido.");
     if(!payload.vencDni || !document.getElementById('file-dni').files[0]) {
         return alert("El DNI y su fecha de vencimiento son obligatorios.");
     }
 
-    // Validación de No Vencidos
     const hoy = new Date().toISOString().split('T')[0];
     if (payload.vencDni < hoy) return alert("El DNI está vencido. No se puede registrar.");
     
@@ -87,11 +86,24 @@ async function handleRegister() {
     toggleLoader(true, "Subiendo documentos...");
 
     try {
+        // 2. Preparar archivos en Base64
         payload.fileDni = await toBase64(document.getElementById('file-dni').files[0]);
         if(payload.cargo === 'CONDUCTOR') {
             payload.fileLicencia = await toBase64(document.getElementById('file-licencia').files[0]);
         }
 
+        // --- SOLUCIÓN AQUÍ: CONSTRUIR DOCSMETADATA ---
+        // Este array es el que lee el servidor para llenar la Columna F
+        payload.docsMetadata = [
+            { tipo: 'DNI', venc: payload.vencDni }
+        ];
+
+        if(payload.cargo === 'CONDUCTOR') {
+            payload.docsMetadata.push({ tipo: 'BREVETE', venc: payload.vencLicencia });
+        }
+        // --------------------------------------------
+
+        // 3. Envío al servidor
         const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
         const result = await res.json();
 
