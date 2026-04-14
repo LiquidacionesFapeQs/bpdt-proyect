@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzFIAWximCjdH8TX-Y-G0ioFSp_hUKSBkdCrY6TrHs1FauoBWjvqe0oY3zgKQYcLwn-sw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwJPfX6B7DRciLZdEWkoqlUPkvORfvA_Ysk6yyBHr8qSY6QzNW5dXwBZ527vJw7DbgUPg/exec";
 
 // --- NAVEGACIÓN ---
 function showView(viewName) {
@@ -52,7 +52,6 @@ function toggleFieldsByCargo() {
 }
 
 async function handleRegister() {
-    // 1. Capturamos el DNI y generamos la clave automáticamente
     const dniInput = document.getElementById('reg-dni').value;
     const autoPass = dniInput.toString().slice(-4); 
 
@@ -65,45 +64,45 @@ async function handleRegister() {
         empresa: document.getElementById('reg-empresa').value,
         vencDni: document.getElementById('venc-dni').value,
         vencLicencia: document.getElementById('venc-licencia').value,
-        password: autoPass // Enviamos la clave autogenerada
+        password: autoPass 
     };
 
-    // 2. Validaciones de archivos y fechas obligatorias
+    // Validaciones de campos obligatorios
     if(!payload.dni || payload.dni.length < 8) return alert("DNI no válido.");
     if(!payload.vencDni || !document.getElementById('file-dni').files[0]) {
         return alert("El DNI y su fecha de vencimiento son obligatorios.");
     }
+
+    // Validación de No Vencidos
+    const hoy = new Date().toISOString().split('T')[0];
+    if (payload.vencDni < hoy) return alert("El DNI está vencido. No se puede registrar.");
     
     if(payload.cargo === 'CONDUCTOR') {
         if(!payload.vencLicencia || !document.getElementById('file-licencia').files[0]) {
-            return alert("Para conductores, la Licencia y su vencimiento son obligatorios.");
+            return alert("La Licencia y su vencimiento son obligatorios para conductores.");
         }
+        if (payload.vencLicencia < hoy) return alert("La Licencia está vencida. No se puede registrar.");
     }
 
-    toggleLoader(true, "Procesando registro...");
+    toggleLoader(true, "Subiendo documentos...");
 
     try {
-        // 3. Conversión de archivos a Base64
-        const fileDni = document.getElementById('file-dni').files[0];
-        payload.fileDni = await toBase64(fileDni);
-
+        payload.fileDni = await toBase64(document.getElementById('file-dni').files[0]);
         if(payload.cargo === 'CONDUCTOR') {
-            const fileLic = document.getElementById('file-licencia').files[0];
-            payload.fileLicencia = await toBase64(fileLic);
+            payload.fileLicencia = await toBase64(document.getElementById('file-licencia').files[0]);
         }
 
-        // 4. Envío al servidor (Apps Script)
         const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
         const result = await res.json();
 
         if(result.success) {
-            alert(`¡Registro exitoso!\n\nTu contraseña de acceso son los últimos 4 dígitos de tu DNI: ${autoPass}`);
-            location.reload(); // Limpia el formulario y vuelve al login
+            alert(`¡Registro exitoso!\nContraseña: ${autoPass}`);
+            location.reload(); 
         } else {
             alert("Error: " + result.message);
         }
     } catch (e) {
-        alert("Error de conexión con el servidor.");
+        alert("Error de conexión.");
     }
     toggleLoader(false);
 }
