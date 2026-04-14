@@ -5,132 +5,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HT-BPDT | Portal Tripulación</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .loader { border-top-color: #3498db; animation: spinner 1.5s linear infinite; }
+        :root {
+            --brand-red: #E30613;
+            --brand-grey: #707070;
+            --brand-light-grey: #F5F5F5;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--brand-light-grey);
+        }
+        .loader { border-top-color: var(--brand-red); animation: spinner 1.5s linear infinite; }
         @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        input[type="number"]::-webkit-inner-spin-button, 
-        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .header-curve { 
+            border-radius: 0 0 40px 40px; 
+            background: linear-gradient(135deg, #E30613 0%, #8b0000 100%); 
+        }
+        input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4 font-sans">
+<body class="min-h-screen flex justify-center items-start sm:items-center">
 
-    <div id="app-container" class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md border border-slate-200">
+    <div id="app-container" class="w-full max-w-[480px] min-h-screen sm:min-h-[85vh] sm:rounded-3xl sm:shadow-2xl overflow-hidden bg-white relative mx-auto">
         
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">HT-BPDT</h1>
-            <p class="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Sistema de Gestión de Transportes</p>
-        </div>
+        <!-- VISTA: LOGIN -->
+        <div id="view-login" class="p-8 space-y-8 animate-fade-in pt-16">
+            <div class="text-center">
+                <!-- LOGO: CAMIÓN DE TRANSPORTE SVG -->
+                <div class="inline-block p-6 mb-4 bg-red-50 rounded-full">
+                    <svg class="w-20 h-20 text-[#E30613]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Cabina del camión -->
+                        <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12" />
+                        <!-- Caja/Remolque -->
+                        <path d="M14 8h5l3 3v7h-8" />
+                        <!-- Ventana -->
+                        <path d="M14 11h3l1.5 2h-4.5V11z" />
+                        <!-- Ruedas -->
+                        <circle cx="5.5" cy="18.5" r="2.5" />
+                        <circle cx="18.5" cy="18.5" r="2.5" />
+                        <!-- Línea de suelo/movimiento -->
+                        <path d="M2 22h20" stroke-dasharray="2 4"/>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight uppercase">HT-BPDT</h1>
+                <p class="text-[#707070] text-xs font-bold uppercase tracking-[0.2em]">Gestión de Transporte</p>
+            </div>
 
-        <div id="view-login" class="space-y-4 animate-fade-in">
-            <div class="space-y-2">
-                <label class="text-xs font-bold text-slate-600 ml-1 uppercase">DNI de Usuario</label>
-                <input type="number" id="login-dni" placeholder="Ingrese su DNI" 
-                       class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            <div class="space-y-4">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 ml-1 uppercase">DNI de Usuario</label>
+                    <input type="number" id="login-dni" placeholder="Ingresa tu DNI" 
+                           class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-red-500 outline-none transition-all text-lg font-medium">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 ml-1 uppercase">Contraseña</label>
+                    <input type="password" id="login-pass" placeholder="Últimos 4 dígitos del DNI" 
+                           class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-red-500 outline-none transition-all text-lg font-medium">
+                </div>
+                <button onclick="handleLogin()" 
+                        class="w-full bg-[#E30613] text-white p-5 rounded-2xl font-bold hover:bg-[#a5040d] active:scale-[0.98] transition-all shadow-xl shadow-red-100 uppercase tracking-widest">
+                    INGRESAR
+                </button>
             </div>
-            <div class="space-y-2">
-                <label class="text-xs font-bold text-slate-600 ml-1 uppercase">Contraseña</label>
-                <input type="password" id="login-pass" placeholder="••••" 
-                       class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-            </div>
-            <button onclick="handleLogin()" 
-                    class="w-full bg-slate-900 text-white p-4 rounded-xl font-bold hover:bg-slate-800 active:scale-[0.98] transition-all shadow-lg">
-                INGRESAR AL PORTAL
-            </button>
-            <p class="text-center text-sm text-slate-500 pt-2">
-                ¿No tienes cuenta? <a href="#" onclick="showView('register')" class="text-blue-600 font-bold hover:underline">Regístrate aquí</a>
+
+            <p class="text-center text-sm text-slate-500">
+                ¿Nuevo ingreso? <button onclick="showView('register')" class="text-[#E30613] font-bold hover:underline">Regístrate aquí</button>
             </p>
         </div>
 
-        <div id="view-register" class="hidden space-y-4 animate-fade-in">
-            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest text-center mb-2">Nuevo Registro</h2>
+        <!-- VISTA: REGISTRO -->
+        <div id="view-register" class="hidden p-6 space-y-4 animate-fade-in overflow-y-auto max-h-screen pb-10">
+            <div class="flex items-center gap-4 mb-4">
+                <button onclick="showView('login')" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <h2 class="text-xl font-bold text-slate-800">Crear Perfil</h2>
+            </div>
             
-            <div id="reg-step-1" class="p-4 bg-blue-50 rounded-xl border border-blue-100 shadow-sm">
-                <label class="text-[10px] font-black text-blue-700 block mb-2 uppercase">1. Validación de DNI</label>
+            <div id="reg-step-1" class="p-5 bg-red-50 rounded-2xl border border-red-100 space-y-3">
+                <label class="text-xs font-black text-[#E30613] block uppercase tracking-tighter">1. Validación de Identidad</label>
                 <div class="flex gap-2">
-                    <input type="number" id="reg-dni" placeholder="Número de DNI" 
-                           class="flex-1 p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                    <button onclick="handleCheckDni()" 
-                            class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition">Verificar</button>
+                    <input type="number" id="reg-dni" placeholder="DNI" 
+                           class="flex-1 p-3 border border-red-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none">
+                    <button onclick="handleCheckDni()" class="bg-[#E30613] text-white px-4 rounded-xl font-bold text-sm">Verificar</button>
                 </div>
             </div>
 
-            <div id="reg-fields" class="hidden space-y-4">
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="reg-nombres" placeholder="Nombres" class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    <input type="text" id="reg-apellidos" placeholder="Apellidos" class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            <div id="reg-fields" class="hidden space-y-4 animate-fade-in">
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="text" id="reg-nombres" placeholder="Nombres" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500">
+                    <input type="text" id="reg-apellidos" placeholder="Apellidos" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500">
                 </div>
 
-                <select id="reg-cargo" onchange="toggleFieldsByCargo()" 
-                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none">
-                    <option value="">Seleccione su Cargo</option>
+                <select id="reg-cargo" onchange="toggleFieldsByCargo()" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="">Seleccione Cargo</option>
                     <option value="CONDUCTOR">CONDUCTOR</option>
                     <option value="AUXILIAR">AUXILIAR</option>
                 </select>
 
-                <select id="reg-empresa" 
-                        class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none">
-                    <option value="">Cargando empresas...</option>
+                <select id="reg-empresa" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="">Seleccione Empresa</option>
                 </select>
 
-                <div class="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200 shadow-inner">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Documentación Obligatoria</p>
+                <div class="space-y-4 p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Documentación Obligatoria</p>
                     
                     <div class="space-y-2">
-                        <label class="text-xs font-bold text-slate-700">Foto de DNI:</label>
-                        <input type="file" id="file-dni" accept="image/*,application/pdf" 
-                               class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                        <label class="text-[10px] text-slate-500 font-bold ml-1 italic">Fecha de Vencimiento:</label>
-                        <input type="date" id="venc-dni" class="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        <label class="text-[10px] font-bold text-slate-700 uppercase">Foto DNI:</label>
+                        <input type="file" id="file-dni" accept="image/*" class="w-full text-xs">
+                        <label class="text-[10px] font-bold text-slate-700 uppercase block mt-2">Vencimiento DNI:</label>
+                        <input type="date" id="venc-dni" class="w-full p-3 text-sm border border-slate-200 rounded-xl">
                     </div>
 
-                    <div id="box-licencia" class="hidden space-y-2 border-t border-slate-200 pt-3">
-                        <label class="text-xs font-bold text-slate-700">Foto de Licencia:</label>
-                        <input type="file" id="file-licencia" accept="image/*,application/pdf" 
-                               class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
-                        <label class="text-[10px] text-slate-500 font-bold ml-1 italic">Fecha de Vencimiento:</label>
-                        <input type="date" id="venc-licencia" class="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    <div id="box-licencia" class="hidden space-y-2 border-t pt-3 mt-3">
+                        <label class="text-[10px] font-bold text-slate-700 uppercase">Foto Licencia:</label>
+                        <input type="file" id="file-licencia" accept="image/*" class="w-full text-xs">
+                        <label class="text-[10px] font-bold text-slate-700 uppercase block mt-2">Vencimiento Licencia:</label>
+                        <input type="date" id="venc-licencia" class="w-full p-3 text-sm border border-slate-200 rounded-xl">
                     </div>
                 </div>
 
-                <div class="p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-center gap-3">
-                    <span class="text-lg">🔐</span>
-                    <p class="text-[10px] text-amber-800 leading-tight">
-                        <b>IMPORTANTE:</b> Tu contraseña de acceso se generará automáticamente con los <b>últimos 4 dígitos de tu DNI</b>.
-                    </p>
-                </div>
-
-                <button onclick="handleRegister()" id="btn-register" 
-                        class="w-full bg-blue-600 text-white p-4 rounded-xl font-bold hover:bg-blue-700 active:scale-95 shadow-lg transition-all uppercase tracking-wide">
-                    Finalizar y Registrar
+                <button onclick="handleRegister()" 
+                        class="w-full bg-[#E30613] text-white p-5 rounded-2xl font-bold shadow-lg shadow-red-100 transition-all uppercase tracking-widest text-sm">
+                    Finalizar Registro
                 </button>
             </div>
-            
-            <button onclick="showView('login')" class="w-full text-slate-400 text-xs font-bold hover:text-slate-600 transition-colors">
-                « VOLVER AL INICIO DE SESIÓN
-            </button>
         </div>
 
-        <div id="view-dashboard" class="hidden space-y-6 animate-fade-in text-center">
-            <div id="user-info" class="p-4 bg-slate-50 rounded-2xl border border-slate-100"></div>
-            <div id="compliance-card" class="p-6 rounded-2xl text-white shadow-lg bg-slate-200">
-                <p class="text-xs opacity-80 uppercase tracking-widest mb-1">Tu Cumplimiento Actual</p>
-                <h3 id="compliance-pct" class="text-5xl font-black italic">0%</h3>
-                <p id="compliance-label" class="text-sm font-bold mt-2 bg-white/20 py-1 px-3 rounded-full inline-block"></p>
+        <!-- VISTA: DASHBOARD -->
+        <div id="view-dashboard" class="hidden animate-fade-in flex flex-col min-h-screen bg-[#F5F5F5]">
+            <div class="header-curve px-8 pt-10 pb-20 relative shadow-xl text-white">
+                <div class="flex justify-between items-start relative z-10">
+                    <div id="user-info" class="space-y-1">
+                        <h2 class="text-2xl font-black uppercase">Cargando...</h2>
+                    </div>
+                    <button onclick="location.reload()" class="p-3 bg-white/10 rounded-2xl hover:bg-black/20 backdrop-blur-md border border-white/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    </button>
+                </div>
             </div>
-            <button onclick="location.reload()" class="w-full py-3 text-slate-400 text-xs font-bold border-t hover:text-rose-500 transition-colors">
-                CERRAR SESIÓN SEGURA
-            </button>
+
+            <!-- KPI Card Dinámico -->
+            <div class="px-6 -mt-10 relative z-10">
+                <div id="compliance-card" class="p-6 rounded-3xl shadow-xl flex items-center gap-6 border border-white/20 transition-all duration-500">
+                    <div class="relative w-16 h-16 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
+                        <span id="compliance-pct" class="text-lg font-black text-white">0%</span>
+                    </div>
+                    <div class="flex-1">
+                        <p id="compliance-label" class="text-xs font-black text-white uppercase tracking-widest">Calculando...</p>
+                        <p class="text-[10px] text-white/80 font-medium leading-tight mt-1">Nivel de cumplimiento según documentos vigentes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="docs-list" class="px-6 mt-8 pb-10 space-y-3">
+                <!-- Se inyectarán documentos -->
+            </div>
         </div>
 
-        <div id="loader" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center z-50">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-200 h-16 w-16 mb-4"></div>
-            <p id="loader-text" class="text-white text-sm font-bold tracking-widest uppercase animate-pulse">Procesando...</p>
+        <!-- Pantalla de Carga -->
+        <div id="loader" class="hidden fixed inset-0 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center z-50">
+            <div class="loader ease-linear rounded-full border-4 border-t-4 h-16 w-16 mb-4 border-slate-100"></div>
+            <p id="loader-text" class="text-[#E30613] text-xs font-black tracking-[0.2em] uppercase">Procesando...</p>
         </div>
-
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
