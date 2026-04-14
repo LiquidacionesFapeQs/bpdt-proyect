@@ -33,7 +33,6 @@
 
     <div id="app-container" class="w-full max-w-[480px] min-h-screen sm:min-h-[85vh] sm:rounded-3xl sm:shadow-2xl overflow-hidden bg-white relative mx-auto">
         
-        <!-- VISTA: LOGIN -->
         <div id="view-login" class="p-8 space-y-8 animate-fade-in pt-16">
             <div class="text-center">
                 <div class="inline-block p-6 mb-4 bg-red-50 rounded-full">
@@ -72,7 +71,6 @@
             </p>
         </div>
 
-        <!-- VISTA: REGISTRO -->
         <div id="view-register" class="hidden p-6 space-y-4 animate-fade-in overflow-y-auto max-h-screen pb-10">
             <div class="flex items-center gap-4 mb-4">
                 <button onclick="showView('login')" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
@@ -92,8 +90,8 @@
 
             <div id="reg-fields" class="hidden space-y-4 animate-fade-in">
                 <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="reg-nombres" placeholder="Nombres" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500">
-                    <input type="text" id="reg-apellidos" placeholder="Apellidos" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500">
+                    <input type="text" id="reg-nombres" placeholder="Nombres" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500" disabled>
+                    <input type="text" id="reg-apellidos" placeholder="Apellidos" class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-red-500" disabled>
                 </div>
 
                 <select id="reg-cargo" onchange="toggleFieldsByCargo()" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-red-500">
@@ -103,35 +101,34 @@
                 </select>
 
                 <select id="reg-empresa" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="">Seleccione Empresa</option>
+                    <option value="">Cargando empresas...</option>
                 </select>
 
                 <div class="space-y-4 p-5 bg-slate-50 rounded-2xl border border-slate-200">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Documentación Obligatoria</p>
                     
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-700 uppercase">Foto DNI:</label>
+                        <label class="text-[10px] font-bold text-slate-700 uppercase">Foto DNI (Lado Frontal):</label>
                         <input type="file" id="file-dni" accept="image/*" class="w-full text-xs">
-                        <label class="text-[10px] font-bold text-slate-700 uppercase block mt-2">Vencimiento DNI:</label>
+                        <label class="text-[10px] font-bold text-slate-700 uppercase block mt-2">Fecha de Vencimiento DNI:</label>
                         <input type="date" id="venc-dni" class="w-full p-3 text-sm border border-slate-200 rounded-xl">
                     </div>
 
                     <div id="box-licencia" class="hidden space-y-2 border-t pt-3 mt-3">
-                        <label class="text-[10px] font-bold text-slate-700 uppercase">Foto Licencia:</label>
+                        <label class="text-[10px] font-bold text-slate-700 uppercase">Foto Licencia de Conducir:</label>
                         <input type="file" id="file-licencia" accept="image/*" class="w-full text-xs">
-                        <label class="text-[10px] font-bold text-slate-700 uppercase block mt-2">Vencimiento Licencia:</label>
+                        <label class="text-[10px] font-bold text-slate-700 uppercase block mt-2">Vencimiento de Licencia:</label>
                         <input type="date" id="venc-licencia" class="w-full p-3 text-sm border border-slate-200 rounded-xl">
                     </div>
                 </div>
 
                 <button onclick="handleRegister()" 
                         class="w-full bg-[#E30613] text-white p-5 rounded-2xl font-bold shadow-lg shadow-red-100 transition-all uppercase tracking-widest text-sm">
-                    Finalizar Registro
+                    Finalizar y Subir Documentos
                 </button>
             </div>
         </div>
 
-        <!-- VISTA: DASHBOARD -->
         <div id="view-dashboard" class="hidden animate-fade-in flex flex-col min-h-screen bg-[#F5F5F5]">
             <div class="header-curve px-8 pt-10 pb-20 relative shadow-xl text-white">
                 <div class="flex justify-between items-start relative z-10">
@@ -144,7 +141,6 @@
                 </div>
             </div>
 
-            <!-- KPI Card Dinámico -->
             <div class="px-6 -mt-10 relative z-10">
                 <div id="compliance-card" class="p-6 rounded-3xl shadow-xl flex items-center gap-6 border border-white/20 transition-all duration-500">
                     <div class="relative w-16 h-16 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-sm">
@@ -152,24 +148,22 @@
                     </div>
                     <div class="flex-1">
                         <p id="compliance-label" class="text-xs font-black text-white uppercase tracking-widest">Calculando...</p>
-                        <p class="text-[10px] text-white/80 font-medium leading-tight mt-1">Nivel de cumplimiento según documentos vigentes.</p>
+                        <p class="text-[10px] text-white/80 font-medium leading-tight mt-1">Cumplimiento de Buenas Prácticas de Distribución.</p>
                     </div>
                 </div>
             </div>
 
             <div id="docs-list" class="px-6 mt-8 pb-10 space-y-3">
-                <!-- Se inyectarán documentos dinámicamente -->
-            </div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Estado de tus documentos</p>
+                </div>
         </div>
 
-        <!-- Pantalla de Carga -->
         <div id="loader" class="hidden fixed inset-0 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center z-50">
             <div class="loader ease-linear rounded-full border-4 border-t-4 h-16 w-16 mb-4 border-slate-100"></div>
             <p id="loader-text" class="text-[#E30613] text-xs font-black tracking-[0.2em] uppercase">Procesando...</p>
         </div>
     </div>
 
-    <!-- Referencia al archivo de scripts separado -->
     <script src="script.js"></script>
 </body>
 </html>
