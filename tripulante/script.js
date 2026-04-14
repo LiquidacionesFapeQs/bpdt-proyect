@@ -132,11 +132,30 @@ async function handleLogin() {
     }
 }
 
-function showDashboard(user) {
+// Añadimos 'kpi' como segundo parámetro
+function showDashboard(user, kpi) {
     showView('dashboard');
+
+    // 1. Datos de Identidad
     document.getElementById('user-info').innerHTML = `
-        <p class="font-bold text-lg">${user.dni}</p>
-        <p class="text-sm text-gray-600">${user.empresa}</p>
-        <p class="text-xs text-blue-500 uppercase">${user.rol}</p>
+        <h2 class="text-xl font-black text-slate-800">${user.dni}</h2>
+        <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">${user.empresa}</p>
+        <p class="text-[9px] font-medium text-slate-400 uppercase">${user.cargo || user.rol}</p>
     `;
+
+    // 2. Cálculo del porcentaje para la tarjeta
+    const card = document.getElementById('compliance-card');
+    const rawPct = (kpi && kpi.porcentaje) ? kpi.porcentaje : 0;
+    const pct = Math.round(rawPct * 100);
+
+    // 3. Inyectar datos en la tarjeta
+    document.getElementById('compliance-pct').innerText = `${pct}%`;
+    document.getElementById('compliance-label').innerText = (kpi && kpi.calificacion) ? kpi.calificacion : "SIN DATOS";
+
+    // 4. Cambiar el COLOR de la tarjeta dinámicamente
+    card.className = "p-6 rounded-2xl text-white shadow-lg transition-all duration-500"; // Reset
+    
+    if (pct >= 90) card.classList.add('bg-emerald-500'); // Verde si es alto
+    else if (pct >= 70) card.classList.add('bg-amber-500'); // Naranja si es medio
+    else card.classList.add('bg-rose-500'); // Rojo si es bajo (como tu 0%)
 }
