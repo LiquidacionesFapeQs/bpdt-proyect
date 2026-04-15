@@ -147,8 +147,8 @@ function showDashboard(user) {
     showView('dashboard');
 
     // 1. Inyectar textos directamente en sus IDs (evita el undefined de nombres vacíos)
-    document.getElementById('display-name').innerText = `${user.nombres || ''} ${user.apellidos || ''}`.trim() || "USUARIO";
-    document.getElementById('display-cargo').innerText = user.cargo || "SIN CARGO";
+    document.getElementById('display-name').innerText = `${data.nombres || ''} ${data.apellidos || ''}`.trim() || "USUARIO";
+    document.getElementById('display-cargo').innerText = data.cargo || "SIN CARGO";
     document.getElementById('display-empresa').innerText = user.empresa || "";
 
     // 2. Lógica de la Tarjeta KPI
