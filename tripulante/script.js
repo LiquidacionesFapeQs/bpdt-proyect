@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzS3-Ov03KysDxfQTahOSLbqHJs0_kPHOsSQJiSMidKPfXc9VQYInLbq2j-hrMW7uZrQg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxmZ-rsoXXRRt5ILC7kGgGI8sSMEMKvgwHVO_0P6hPs7Pp09QKZlARMrj1CHx7odXSw/exec";
 
 // --- NAVEGACIÓN ---
 function showView(viewName) {
@@ -146,27 +146,46 @@ async function handleLogin() {
 function showDashboard(user) {
     showView('dashboard');
 
-    // 1. Datos de Identidad
+    // 1. Datos de Identidad (Corregido: Texto Blanco para fondo rojo)
     document.getElementById('user-info').innerHTML = `
-        <h2 class="text-xl font-black text-slate-800">${user.nombres} ${user.apellidos}</h2>
-        <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">${user.empresa}</p>
-        <p class="text-[9px] font-medium text-slate-400 uppercase">${user.cargo}</p>
+        <div class="flex items-center gap-2 opacity-90 mb-1">
+            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <p class="text-white text-[10px] font-bold uppercase tracking-[0.2em]">Portal Tripulación</p>
+        </div>
+        <h2 class="text-3xl font-[900] text-white leading-tight uppercase tracking-tight">${user.nombres} ${user.apellidos}</h2>
+        <div class="flex flex-col gap-1 mt-2">
+            <span class="inline-block w-fit px-3 py-1 bg-white/20 rounded-full text-[10px] font-black text-white uppercase backdrop-blur-md italic">${user.cargo}</span>
+            <p class="text-[11px] font-bold text-white/90 uppercase tracking-wide">${user.empresa}</p>
+        </div>
     `;
 
-    // 2. Tarjeta de Cumplimiento (Usamos los datos que vienen del backend)
+    // 2. Tarjeta de Cumplimiento (Blanco Fijo)
     const card = document.getElementById('compliance-card');
+    const ring = document.getElementById('compliance-ring');
+    const pctLabel = document.getElementById('compliance-pct');
+    const statusLabel = document.getElementById('compliance-label');
+    
     const pct = Math.round((user.cumplimiento?.porcentaje || 0) * 100);
 
-    document.getElementById('compliance-pct').innerText = `${pct}%`;
-    document.getElementById('compliance-label').innerText = user.cumplimiento?.calificacion || "SIN CALIFICAR";
+    // Reset de la tarjeta para que sea SIEMPRE blanca
+    card.className = "bg-white rounded-[32px] p-8 shadow-2xl shadow-slate-200 flex items-center gap-6 border border-slate-50 relative z-20";
 
-    // Colores dinámicos
-    card.className = "p-6 rounded-3xl shadow-xl flex items-center gap-6 border border-white/20 transition-all text-white";
-    if (pct >= 90) card.classList.add('bg-emerald-500');
-    else if (pct >= 70) card.classList.add('bg-amber-500');
-    else card.classList.add('bg-rose-500');
+    // Actualizar números y textos
+    pctLabel.innerText = `${pct}%`;
+    statusLabel.innerText = user.cumplimiento?.calificacion || "SIN CALIFICAR";
 
-    // 3. RENDERIZAR DOCUMENTOS (La parte que faltaba)
+    // Lógica de Colores según Porcentaje
+    let colorHex = "#E30613"; // Rojo por defecto (bajo)
+    if (pct >= 90) colorHex = "#10b981";      // Verde (alto)
+    else if (pct >= 70) colorHex = "#f59e0b"; // Ámbar (medio)
+
+    // Aplicar color al aro de progreso (conic-gradient)
+    ring.style.background = `conic-gradient(${colorHex} ${pct}%, #e2e8f0 ${pct}%)`;
+    
+    // Aplicar color al título del estado
+    statusLabel.style.color = colorHex;
+
+    // 3. Renderizar Lista de Documentos
     renderDocs(user.docs || []);
 }
 
