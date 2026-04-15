@@ -151,6 +151,7 @@ async function handleLogin() {
 // Añadimos 'kpi' como segundo parámetro
 // REEMPLAZA TU FUNCIÓN showDashboard POR ESTA:
 function showDashboard(user) {
+    document.getElementById('display-name').setAttribute('data-dni', user.dni || document.getElementById('login-dni').value);
     showView('dashboard');
 
     // Extraemos con seguridad (por si el servidor manda nombres en mayúsculas)
@@ -161,17 +162,24 @@ function showDashboard(user) {
     document.getElementById('display-empresa').innerText = user.empresa || user.RAZON_SOCIAL || "";
 
     // Actualizar KPI
-    const cumplimiento = user.cumplimiento || {};
-    const pct = Math.round((cumplimiento.porcentaje || 0) * 100);
-    
-    document.getElementById('compliance-pct').innerText = pct + '%';
-    const label = document.getElementById('compliance-label');
-    const ring = document.getElementById('compliance-ring');
-    
-    let color = pct >= 90 ? "#10b981" : (pct >= 70 ? "#f59e0b" : "#E30613");
-    ring.style.background = `conic-gradient(${color} ${pct}%, #e2e8f0 ${pct}%)`;
-    label.innerText = cumplimiento.calificacion || "SIN CALIFICAR";
-    label.style.color = color;
+const cumplimiento = user.cumplimiento || {};
+// Aseguramos que el porcentaje sea un número válido entre 0 y 1
+const pctRaw = cumplimiento.porcentaje || 0;
+const pct = Math.round(pctRaw * 100);
+
+document.getElementById('compliance-pct').innerText = pct + '%';
+const label = document.getElementById('compliance-label');
+const ring = document.getElementById('compliance-ring');
+
+// Colores según tus parámetros de KPI
+let color = pct >= 90 ? "#10b981" : (pct >= 71 ? "#f59e0b" : "#E30613");
+
+// Añadimos un pequeño borde/shadow al anillo para que se vea más profundo
+ring.style.background = `conic-gradient(${color} ${pct}%, #F1F5F9 ${pct}%)`;
+ring.style.boxShadow = `0 0 20px ${color}20`; // Sombra suave del color del estado
+
+label.innerText = (cumplimiento.calificacion || "SIN CALIFICAR").toUpperCase();
+label.style.color = color;
 
     // Renderizar lista de documentos
     renderDocs(user.docs || []);
@@ -204,6 +212,38 @@ function renderDocs(docs) {
         `;
         container.appendChild(card);
     });
+}
+
+async function recalculate() {
+    // Intentamos obtener el DNI desde el atributo que guardaremos o del login
+    const dniActual = document.getElementById('display-name').getAttribute('data-dni');
+    
+    if (!dniActual) {
+        alert("Error: No se pudo identificar el DNI para el recálculo.");
+        return;
+    }
+
+    const icon = document.getElementById('icon-refresh');
+    const loader = document.getElementById('loader');
+    
+    // Feedback visual
+    icon.style.transform = 'rotate(360deg)';
+    loader.classList.remove('hidden');
+    document.getElementById('loader-text').innerText = "ACTUALIZANDO INDICADORES...";
+
+    try {
+        const res = await fetch(google.script.run.withSuccessHandler(function(result) {
+            if (result.exists) {
+                showDashboard(result.data); // Refresca los anillos y la lista
+            }
+            loader.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+        }).getTripulanteByDni(dniActual));
+        
+    } catch (e) {
+        loader.classList.add('hidden');
+        console.error("Error:", e);
+    }
 }
 
 // Helper para colores de etiquetas
