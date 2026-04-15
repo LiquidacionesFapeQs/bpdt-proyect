@@ -143,32 +143,40 @@ async function handleLogin() {
 }
 
 // Añadimos 'kpi' como segundo parámetro
+// REEMPLAZA TU FUNCIÓN showDashboard POR ESTA:
 function showDashboard(user) {
     showView('dashboard');
+    
+    const nombres = user.nombres || user.NOMBRES || '';
+    const apellidos = user.apellidos || user.APELLIDOS || '';
+    const cargo = user.cargo || user.CARGO || 'SIN CARGO';
+    const empresa = user.empresa || user.RAZON_SOCIAL || '';
 
-    // 1. Inyectar textos directamente en sus IDs (evita el undefined de nombres vacíos)
-    document.getElementById('display-name').innerText = `${data.nombres || ''} ${data.apellidos || ''}`.trim() || "USUARIO";
-    document.getElementById('display-cargo').innerText = data.cargo || "SIN CARGO";
-    document.getElementById('display-empresa').innerText = user.empresa || "";
+    // Inyectamos los textos en el HTML
+    document.getElementById('display-name').innerText = `${nombres} ${apellidos}`.trim() || "USUARIO";
+    document.getElementById('display-cargo').innerText = cargo;
+    document.getElementById('display-empresa').innerText = empresa;
 
-    // 2. Lógica de la Tarjeta KPI
-    const pct = Math.round((user.cumplimiento?.porcentaje || 0) * 100);
+    // 2. Lógica de la Tarjeta KPI (Asegurando que no falle si cumplimiento es nulo)
+    const cumplimiento = user.cumplimiento || {};
+    const pct = Math.round((cumplimiento.porcentaje || 0) * 100);
+    
     const ring = document.getElementById('compliance-ring');
     const label = document.getElementById('compliance-label');
     const pctText = document.getElementById('compliance-pct');
 
     pctText.innerText = `${pct}%`;
-    label.innerText = user.cumplimiento?.calificacion || "SIN CALIFICAR";
+    label.innerText = cumplimiento.calificacion || "SIN CALIFICAR";
 
-    // Colores dinámicos solo para el aro y el texto del label
-    let color = "#E30613"; // Rojo
-    if (pct >= 90) color = "#10b981"; // Verde
-    else if (pct >= 70) color = "#f59e0b"; // Ámbar
+    // Colores dinámicos
+    let color = "#E30613"; // Rojo (Deficiente)
+    if (pct >= 90) color = "#10b981"; // Verde (Excelente)
+    else if (pct >= 70) color = "#f59e0b"; // Ámbar (Regular)
 
     ring.style.background = `conic-gradient(${color} ${pct}%, #e2e8f0 ${pct}%)`;
     label.style.color = color;
 
-    // 3. Documentos
+    // 3. Renderizar Lista de Documentos
     renderDocs(user.docs || []);
 }
 
