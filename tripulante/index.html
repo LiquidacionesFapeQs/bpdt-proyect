@@ -122,37 +122,65 @@
             </div>
         </div>
 
-        <div id="view-dashboard" class="hidden animate-fade-in flex flex-col min-h-screen sm:min-h-0 bg-[#F5F5F5]">
-            <div class="header-curve px-8 pt-10 pb-20 relative shadow-xl overflow-hidden">
-                <div class="flex justify-between items-start relative z-10">
-                    <div id="user-info" class="space-y-1">
-                        <h2 class="text-2xl font-black text-white leading-tight">...</h2>
-                        <div class="inline-block px-3 py-1 bg-white/20 rounded-full text-[10px] font-black text-white uppercase backdrop-blur-md italic">Cargando</div>
-                    </div>
-                    <button onclick="location.reload()" class="p-3 bg-white/10 rounded-2xl text-white hover:bg-black/20 transition-colors backdrop-blur-md border border-white/20 shadow-inner">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    </button>
+    <div id="view-dashboard" class="hidden animate-fade-in flex flex-col min-h-screen sm:min-h-0 bg-[#F5F5F5]">
+    
+    <div class="bg-[#E30613] px-8 pt-10 pb-20 relative overflow-hidden shadow-lg" style="border-radius: 0 0 40px 40px;">
+        <div class="flex justify-between items-start relative z-10">
+            <div id="user-info" class="space-y-2">
+                <div class="flex items-center gap-2 opacity-90">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                    </svg>
+                    <p class="text-white text-[10px] font-bold uppercase tracking-widest">Portal Tripulación</p>
+                </div>
+                
+                <h2 id="display-name" class="text-3xl font-[900] text-white leading-tight uppercase tracking-tight">
+                    Juan Carlos Gomez
+                </h2>
+                
+                <div class="flex flex-col gap-2 items-start">
+                    <span id="display-cargo" class="px-4 py-1 bg-white/20 rounded-full text-[10px] font-black text-white uppercase backdrop-blur-sm">
+                        Conductor
+                    </span>
+                    <p id="display-empresa" class="text-white text-xs font-bold opacity-90 tracking-wide uppercase">
+                        HT Transportes
+                    </p>
                 </div>
             </div>
 
-            <div class="px-6 kpi-card relative z-10">
-                <div id="compliance-card" class="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200 flex items-center gap-6 border border-slate-100 transition-colors duration-500">
-                    <div class="relative w-20 h-20 rounded-full flex items-center justify-center bg-white/20">
-                        <span id="compliance-pct" class="text-2xl font-black italic">0%</span>
-                    </div>
-                    <div class="flex-1 space-y-1">
-                        <p id="compliance-label" class="text-xs font-black uppercase tracking-widest">Estado</p>
-                        <p class="text-[10px] opacity-80 font-medium leading-tight italic text-slate-500">Nivel de cumplimiento reglamentario.</p>
-                    </div>
+            <button onclick="location.reload()" class="p-3 bg-transparent border border-white/30 rounded-2xl text-white hover:bg-white/10 transition-all shadow-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="px-6 -mt-12 relative z-20">
+        <div id="compliance-card" class="bg-white rounded-[32px] p-8 shadow-2xl shadow-slate-200 flex items-center gap-6 border border-slate-50">
+            <div id="compliance-ring" class="relative w-24 h-24 rounded-full flex items-center justify-center p-2" 
+                 style="background: conic-gradient(#10b981 100%, #e2e8f0 0%);">
+                <div class="bg-white w-full h-full rounded-full flex items-center justify-center shadow-inner">
+                    <span id="compliance-pct" class="text-2xl font-[900] text-slate-800 italic tracking-tighter">100%</span>
                 </div>
             </div>
-
-            <div class="px-6 mt-8 pb-10">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-1">Estado de tus Documentos</p>
-                <div id="docs-list" class="space-y-3">
-                    </div>
+            
+            <div class="flex-1 space-y-1">
+                <p id="compliance-label" class="text-lg font-black text-[#10b981] leading-tight uppercase">
+                    Documentación OK
+                </p>
+                <p class="text-xs text-slate-400 font-medium leading-tight italic">
+                    Nivel de cumplimiento reglamentario para el servicio.
+                </p>
             </div>
         </div>
+    </div>
+
+    <div class="px-8 mt-10 pb-10">
+        <div id="docs-list" class="space-y-4">
+            </div>
+    </div>
+</div>
 
         <div id="loader" class="hidden fixed inset-0 bg-white/80 backdrop-blur-md flex flex-col items-center justify-center z-50">
             <div class="loader ease-linear rounded-full border-4 border-t-4 h-14 w-14 mb-4"></div>
