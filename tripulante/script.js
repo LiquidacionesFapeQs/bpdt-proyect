@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbx3WL1Gw-gw6zJS0kGEhf5ufGg_30Y8UmfBt2S9D-1d7itU4ekjRqx3TjLIRex47Hd_5Q/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwt_mlT__C4FolgI4ygxx7-UCj1xq4G-jFgac7_RGA1QzhgzZurOkHD4FuIBHW-sWzAjg/exec";
 
 // --- NAVEGACIÓN ---
 function showView(viewName) {
@@ -146,37 +146,28 @@ async function handleLogin() {
 // REEMPLAZA TU FUNCIÓN showDashboard POR ESTA:
 function showDashboard(user) {
     showView('dashboard');
+
+    // Extraemos con seguridad (por si el servidor manda nombres en mayúsculas)
+    const nombreCompleto = `${user.nombres || user.NOMBRES || ''} ${user.apellidos || user.APELLIDOS || ''}`.trim();
     
-    const nombres = user.nombres || user.NOMBRES || '';
-    const apellidos = user.apellidos || user.APELLIDOS || '';
-    const cargo = user.cargo || user.CARGO || 'SIN CARGO';
-    const empresa = user.empresa || user.RAZON_SOCIAL || '';
+    document.getElementById('display-name').innerText = nombreCompleto || "USUARIO";
+    document.getElementById('display-cargo').innerText = user.cargo || user.CARGO || "SIN CARGO";
+    document.getElementById('display-empresa').innerText = user.empresa || user.RAZON_SOCIAL || "";
 
-    // Inyectamos los textos en el HTML
-    document.getElementById('display-name').innerText = `${nombres} ${apellidos}`.trim() || "USUARIO";
-    document.getElementById('display-cargo').innerText = cargo;
-    document.getElementById('display-empresa').innerText = empresa;
-
-    // 2. Lógica de la Tarjeta KPI (Asegurando que no falle si cumplimiento es nulo)
+    // Actualizar KPI
     const cumplimiento = user.cumplimiento || {};
     const pct = Math.round((cumplimiento.porcentaje || 0) * 100);
     
-    const ring = document.getElementById('compliance-ring');
+    document.getElementById('compliance-pct').innerText = pct + '%';
     const label = document.getElementById('compliance-label');
-    const pctText = document.getElementById('compliance-pct');
-
-    pctText.innerText = `${pct}%`;
-    label.innerText = cumplimiento.calificacion || "SIN CALIFICAR";
-
-    // Colores dinámicos
-    let color = "#E30613"; // Rojo (Deficiente)
-    if (pct >= 90) color = "#10b981"; // Verde (Excelente)
-    else if (pct >= 70) color = "#f59e0b"; // Ámbar (Regular)
-
+    const ring = document.getElementById('compliance-ring');
+    
+    let color = pct >= 90 ? "#10b981" : (pct >= 70 ? "#f59e0b" : "#E30613");
     ring.style.background = `conic-gradient(${color} ${pct}%, #e2e8f0 ${pct}%)`;
+    label.innerText = cumplimiento.calificacion || "SIN CALIFICAR";
     label.style.color = color;
 
-    // 3. Renderizar Lista de Documentos
+    // Renderizar lista de documentos
     renderDocs(user.docs || []);
 }
 
