@@ -206,40 +206,6 @@ function renderDocs(docs) {
     });
 }
 
-async function recalculate() {
-    const dni = document.getElementById('reg-dni').value || sessionStorage.getItem('userDni'); 
-    // Nota: Asegúrate de guardar el DNI en el login para recuperarlo aquí
-    
-    const icon = document.getElementById('icon-refresh');
-    const loader = document.getElementById('loader');
-    
-    // 1. Animación visual de carga
-    icon.classList.add('rotate-180');
-    loader.classList.remove('hidden');
-    document.getElementById('loader-text').innerText = "Recalculando Cumplimiento...";
-
-    try {
-        const res = await fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'checkDni', dni: dni })
-        });
-        const result = await res.json();
-
-        if (result.exists) {
-            // Actualizamos el dashboard con los datos frescos
-            showDashboard(result.data);
-        }
-    } catch (e) {
-        console.error("Error al refrescar:", e);
-    } finally {
-        // 2. Quitamos el estado de carga
-        setTimeout(() => {
-            loader.classList.add('hidden');
-            icon.classList.remove('rotate-180');
-        }, 800);
-    }
-}
-
 // Helper para colores de etiquetas
 function getStatusClass(status) {
     switch (status) {
