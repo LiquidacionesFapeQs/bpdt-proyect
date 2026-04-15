@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwt_mlT__C4FolgI4ygxx7-UCj1xq4G-jFgac7_RGA1QzhgzZurOkHD4FuIBHW-sWzAjg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwkD0je1fOXb7xwzFSyap6sPC_rQx3cRAIvT6Tsm4PXZOVCumroFQQlb62gz6AlsEq5HQ/exec";
 
 // --- NAVEGACIÓN ---
 function showView(viewName) {
@@ -106,9 +106,15 @@ async function handleRegister() {
         const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
         const result = await res.json();
 
-        if(result.success) {
-            alert(`¡Registro exitoso!\nContraseña: ${autoPass}`);
-            location.reload(); 
+     if(result.success) {
+          alert(`¡Registro exitoso!\nContraseña: ${autoPass}`);
+          if (result.user) {
+          showDashboard(result.user); 
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                location.reload(); 
+            }
         } else {
             alert("Error: " + result.message);
         }
