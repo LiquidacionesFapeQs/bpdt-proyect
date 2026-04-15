@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyMZspWuulZvpPaK3A29lX-nFn7GXF3MaitIAOfP9Pj26RpZXqXzhGNWbOAS1XwZ5fOEQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzS3-Ov03KysDxfQTahOSLbqHJs0_kPHOsSQJiSMidKPfXc9VQYInLbq2j-hrMW7uZrQg/exec";
 
 // --- NAVEGACIÓN ---
 function showView(viewName) {
@@ -143,29 +143,67 @@ async function handleLogin() {
 }
 
 // Añadimos 'kpi' como segundo parámetro
-function showDashboard(user, kpi) {
+function showDashboard(user) {
     showView('dashboard');
 
     // 1. Datos de Identidad
     document.getElementById('user-info').innerHTML = `
-        <h2 class="text-xl font-black text-slate-800">${user.dni}</h2>
+        <h2 class="text-xl font-black text-slate-800">${user.nombres} ${user.apellidos}</h2>
         <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">${user.empresa}</p>
-        <p class="text-[9px] font-medium text-slate-400 uppercase">${user.cargo || user.rol}</p>
+        <p class="text-[9px] font-medium text-slate-400 uppercase">${user.cargo}</p>
     `;
 
-    // 2. Cálculo del porcentaje para la tarjeta
+    // 2. Tarjeta de Cumplimiento (Usamos los datos que vienen del backend)
     const card = document.getElementById('compliance-card');
-    const rawPct = (kpi && kpi.porcentaje) ? kpi.porcentaje : 0;
-    const pct = Math.round(rawPct * 100);
+    const pct = Math.round((user.cumplimiento?.porcentaje || 0) * 100);
 
-    // 3. Inyectar datos en la tarjeta
     document.getElementById('compliance-pct').innerText = `${pct}%`;
-    document.getElementById('compliance-label').innerText = (kpi && kpi.calificacion) ? kpi.calificacion : "SIN DATOS";
+    document.getElementById('compliance-label').innerText = user.cumplimiento?.calificacion || "SIN CALIFICAR";
 
-    // 4. Cambiar el COLOR de la tarjeta dinámicamente
-    card.className = "p-6 rounded-2xl text-white shadow-lg transition-all duration-500"; // Reset
-    
-    if (pct >= 90) card.classList.add('bg-emerald-500'); // Verde si es alto
-    else if (pct >= 70) card.classList.add('bg-amber-500'); // Naranja si es medio
-    else card.classList.add('bg-rose-500'); // Rojo si es bajo (como tu 0%)
+    // Colores dinámicos
+    card.className = "p-6 rounded-3xl shadow-xl flex items-center gap-6 border border-white/20 transition-all text-white";
+    if (pct >= 90) card.classList.add('bg-emerald-500');
+    else if (pct >= 70) card.classList.add('bg-amber-500');
+    else card.classList.add('bg-rose-500');
+
+    // 3. RENDERIZAR DOCUMENTOS (La parte que faltaba)
+    renderDocs(user.docs || []);
+}
+
+function renderDocs(docs) {
+    const container = document.getElementById('docs-list');
+    container.innerHTML = '<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-1">Estado de tus documentos</p>';
+
+    if (docs.length === 0) {
+        container.innerHTML += '<p class="text-center text-sm text-slate-400 py-10">No hay documentos registrados aún.</p>';
+        return;
+    }
+
+    docs.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = "p-4 bg-white rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center animate-fade-in";
+        
+        // Formatear fecha
+        const fechaStr = doc.venc ? new Date(doc.venc).toLocaleDateString() : 'Sin fecha';
+        
+        card.innerHTML = `
+            <div>
+                <p class="text-xs font-bold text-slate-800 uppercase">${doc.tipo}</p>
+                <p class="text-[10px] text-slate-400 font-medium">Vencimiento: ${fechaStr}</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-[9px] font-black ${getStatusClass(doc.estado)}">
+                ${doc.estado.replace('_', ' ')}
+            </span>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Helper para colores de etiquetas
+function getStatusClass(status) {
+    switch (status) {
+        case 'APROBADO': return 'bg-emerald-100 text-emerald-600';
+        case 'RECHAZADO': return 'bg-rose-100 text-rose-600';
+        default: return 'bg-amber-100 text-amber-600'; // PENDIENTE_VALIDACION
+    }
 }
