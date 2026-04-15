@@ -146,46 +146,29 @@ async function handleLogin() {
 function showDashboard(user) {
     showView('dashboard');
 
-    // 1. Datos de Identidad (Corregido: Texto Blanco para fondo rojo)
-    document.getElementById('user-info').innerHTML = `
-        <div class="flex items-center gap-2 opacity-90 mb-1">
-            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-            <p class="text-white text-[10px] font-bold uppercase tracking-[0.2em]">Portal Tripulación</p>
-        </div>
-        <h2 class="text-3xl font-[900] text-white leading-tight uppercase tracking-tight">${user.nombres} ${user.apellidos}</h2>
-        <div class="flex flex-col gap-1 mt-2">
-            <span class="inline-block w-fit px-3 py-1 bg-white/20 rounded-full text-[10px] font-black text-white uppercase backdrop-blur-md italic">${user.cargo}</span>
-            <p class="text-[11px] font-bold text-white/90 uppercase tracking-wide">${user.empresa}</p>
-        </div>
-    `;
+    // 1. Inyectar textos directamente en sus IDs (evita el undefined de nombres vacíos)
+    document.getElementById('display-name').innerText = `${user.nombres || ''} ${user.apellidos || ''}`.trim() || "USUARIO";
+    document.getElementById('display-cargo').innerText = user.cargo || "SIN CARGO";
+    document.getElementById('display-empresa').innerText = user.empresa || "";
 
-    // 2. Tarjeta de Cumplimiento (Blanco Fijo)
-    const card = document.getElementById('compliance-card');
-    const ring = document.getElementById('compliance-ring');
-    const pctLabel = document.getElementById('compliance-pct');
-    const statusLabel = document.getElementById('compliance-label');
-    
+    // 2. Lógica de la Tarjeta KPI
     const pct = Math.round((user.cumplimiento?.porcentaje || 0) * 100);
+    const ring = document.getElementById('compliance-ring');
+    const label = document.getElementById('compliance-label');
+    const pctText = document.getElementById('compliance-pct');
 
-    // Reset de la tarjeta para que sea SIEMPRE blanca
-    card.className = "bg-white rounded-[32px] p-8 shadow-2xl shadow-slate-200 flex items-center gap-6 border border-slate-50 relative z-20";
+    pctText.innerText = `${pct}%`;
+    label.innerText = user.cumplimiento?.calificacion || "SIN CALIFICAR";
 
-    // Actualizar números y textos
-    pctLabel.innerText = `${pct}%`;
-    statusLabel.innerText = user.cumplimiento?.calificacion || "SIN CALIFICAR";
+    // Colores dinámicos solo para el aro y el texto del label
+    let color = "#E30613"; // Rojo
+    if (pct >= 90) color = "#10b981"; // Verde
+    else if (pct >= 70) color = "#f59e0b"; // Ámbar
 
-    // Lógica de Colores según Porcentaje
-    let colorHex = "#E30613"; // Rojo por defecto (bajo)
-    if (pct >= 90) colorHex = "#10b981";      // Verde (alto)
-    else if (pct >= 70) colorHex = "#f59e0b"; // Ámbar (medio)
+    ring.style.background = `conic-gradient(${color} ${pct}%, #e2e8f0 ${pct}%)`;
+    label.style.color = color;
 
-    // Aplicar color al aro de progreso (conic-gradient)
-    ring.style.background = `conic-gradient(${colorHex} ${pct}%, #e2e8f0 ${pct}%)`;
-    
-    // Aplicar color al título del estado
-    statusLabel.style.color = colorHex;
-
-    // 3. Renderizar Lista de Documentos
+    // 3. Documentos
     renderDocs(user.docs || []);
 }
 
