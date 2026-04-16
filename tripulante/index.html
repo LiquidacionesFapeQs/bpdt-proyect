@@ -3,201 +3,340 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HT-BPDT | Portal Tripulación</title>
+    <title>HT-BPDT | Portal Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --brand-red: #E30613;
-            --brand-grey: #707070;
-            --brand-light-grey: #F5F5F5;
+            --brand-dark: #1A1A1A;
+            --brand-success: #10b981;
         }
-        body { font-family: 'Inter', sans-serif; }
-        .loader { border-top-color: var(--brand-red); animation: spinner 1.5s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .header-curve { 
-            border-radius: 0 0 40px 40px; 
-            background: linear-gradient(135deg, #E30613 0%, #8b0000 100%); 
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc;
         }
         .bg-brand-red { background-color: var(--brand-red); }
         .text-brand-red { color: var(--brand-red); }
         
-        .kpi-card { margin-top: -40px; }
+        /* Animaciones suaves */
+        .page-transition { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-inactive { opacity: 0.3; filter: grayscale(1); pointer-events: none; }
+        
+        /* Glassmorphism para el Dashboard */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Custom Checkbox/Radio */
+        .custom-ring {
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--brand-red);
+        }
     </style>
 </head>
-<body class="bg-[#F5F5F5] min-h-screen flex justify-center items-start sm:items-center">
+<body class="flex justify-center items-center min-h-screen p-0 sm:p-4">
 
-    <div id="app-container" class="w-full max-w-[480px] min-h-screen sm:min-h-0 sm:rounded-3xl sm:shadow-2xl overflow-hidden bg-white relative">
+    <!-- Container Principal (Mobile First) -->
+    <div id="main-canvas" class="w-full max-w-[440px] bg-white min-h-screen sm:min-h-[850px] sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col relative border border-slate-100">
         
-        <div id="view-login" class="p-8 space-y-8 animate-fade-in pt-16">
-            <div class="text-center">
-                <div class="inline-block p-4 bg-brand-red rounded-2xl shadow-lg mb-4">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+        <!-- VISTA 1: LOGIN -->
+        <div id="view-login" class="flex-1 p-8 flex flex-col justify-center page-transition">
+            <div class="mb-10 text-center">
+                <div class="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 00-1 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
                     </svg>
                 </div>
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">HT-BPDT</h1>
-                <p class="text-[#707070] text-xs font-bold uppercase tracking-[0.2em]">Portal de Tripulación</p>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Bienvenido</h1>
+                <p class="text-slate-500 mt-2 font-medium">Ingresa tus credenciales para continuar</p>
             </div>
 
             <div class="space-y-4">
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 ml-1 uppercase">DNI de Usuario</label>
-                    <input type="number" id="login-dni" placeholder="Ingresa tu DNI" 
-                           class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-red-500 outline-none transition-all text-lg font-medium">
+                <div class="group">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block ml-1">Número de DNI</label>
+                    <input type="number" id="login-dni" placeholder="00000000" 
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-red-50/50 focus:border-brand-red outline-none transition-all text-lg font-semibold">
                 </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 ml-1 uppercase">Contraseña</label>
-                    <input type="password" id="login-pass" placeholder="Ingresa tu clave" 
-                           class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-red-500 outline-none transition-all text-lg font-medium">
-                </div>
-                <button onclick="handleLogin()" 
-                        class="w-full bg-brand-red text-white p-5 rounded-2xl font-bold hover:bg-[#a5040d] active:scale-[0.98] transition-all shadow-xl shadow-red-100">
-                    INGRESAR AL PORTAL
-                </button>
-            </div>
-
-            <p class="text-center text-sm text-slate-500">
-                ¿Nuevo ingreso? <button onclick="showView('register')" class="text-brand-red font-bold hover:underline">Regístrate aquí</button>
-            </p>
-        </div>
-
-        <div id="view-register" class="hidden p-6 space-y-4 animate-fade-in">
-            <div class="flex items-center gap-4 mb-4">
-                <button onclick="showView('login')" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                    <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <h2 class="text-xl font-bold text-slate-800">Crear Perfil</h2>
-            </div>
-            
-            <div id="reg-step-1" class="p-5 bg-red-50 rounded-2xl border border-red-100 shadow-sm space-y-3">
-                <label class="text-xs font-black text-brand-red block uppercase">1. Validación de Identidad</label>
-                <div class="flex gap-2">
-                    <input type="number" id="reg-dni" placeholder="DNI" 
-                           class="flex-1 p-3 border border-red-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none">
-                    <button onclick="handleCheckDni()" class="bg-brand-red text-white px-4 rounded-xl font-bold text-sm">Verificar</button>
-                </div>
-            </div>
-
-            <div id="reg-fields" class="hidden space-y-4">
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="reg-nombres" placeholder="Nombres" disabled class="p-4 bg-slate-100 border border-slate-200 rounded-xl text-sm font-semibold">
-                    <input type="text" id="reg-apellidos" placeholder="Apellidos" disabled class="p-4 bg-slate-100 border border-slate-200 rounded-xl text-sm font-semibold">
-                </div>
-
-                <select id="reg-cargo" onchange="toggleFieldsByCargo()" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="">Seleccione Cargo</option>
-                    <option value="CONDUCTOR">CONDUCTOR</option>
-                    <option value="AUXILIAR">AUXILIAR</option>
-                </select>
-
-                <select id="reg-empresa" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="">Cargando empresas...</option>
-                </select>
-
-                <div class="space-y-4 p-5 bg-slate-50 rounded-2xl border border-slate-200">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Fotos y Vencimientos</p>
-                    
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Foto DNI (PDF/Imagen):</label>
-                        <input type="file" id="file-dni" accept="image/*,application/pdf" class="w-full text-xs">
-                        <input type="date" id="venc-dni" class="w-full p-3 text-sm border border-slate-200 rounded-xl">
-                    </div>
-
-                    <div id="box-licencia" class="hidden space-y-2 border-t pt-3">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase">Foto Licencia:</label>
-                        <input type="file" id="file-licencia" accept="image/*,application/pdf" class="w-full text-xs">
-                        <input type="date" id="venc-licencia" class="w-full p-3 text-sm border border-slate-200 rounded-xl">
-                    </div>
-                </div>
-
-                <button onclick="handleRegister()" 
-                        class="w-full bg-brand-red text-white p-5 rounded-2xl font-bold shadow-lg shadow-red-100 transition-all uppercase tracking-widest text-sm">
-                    Finalizar Registro
-                </button>
-            </div>
-        </div>
-
-    <div id="view-dashboard" class="hidden animate-fade-in flex flex-col min-h-screen sm:min-h-0 bg-[#F5F5F5]">
-    
-    <div class="bg-[#E30613] px-8 pt-10 pb-20 relative overflow-hidden shadow-lg" style="border-radius: 0 0 40px 40px;">
-        <div class="flex justify-between items-start relative z-10">
-            <div class="space-y-2">
-                <div class="flex items-center gap-2 opacity-90">
-                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
-                    </svg>
-                    <p class="text-white text-[10px] font-bold uppercase tracking-widest">Portal Tripulación</p>
+                <div class="group">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block ml-1">Contraseña</label>
+                    <input type="password" id="login-pass" placeholder="••••••••" 
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-red-50/50 focus:border-brand-red outline-none transition-all text-lg font-semibold">
                 </div>
                 
-                <h2 id="display-name" class="text-3xl font-[900] text-white leading-tight uppercase tracking-tight">
-                    Cargando...
-                </h2>
-                
-                <div class="flex flex-col gap-2 items-start">
-                    <span id="display-cargo" class="px-4 py-1 bg-white/20 rounded-full text-[10px] font-black text-white uppercase backdrop-blur-sm italic">
-                        ---
-                    </span>
-                    <p id="display-empresa" class="text-white text-xs font-bold opacity-90 tracking-wide uppercase">
-                        ---
-                    </p>
-                </div>
-            </div>
-
-            <div class="flex gap-3 items-center">
-                
-                <button onclick="recalculate()" id="btn-refresh" 
-                        class="flex items-center justify-center bg-white rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.2)] group"
-                        style="width: 100px; height: 50px;">
-                    
-                    <svg id="icon-refresh" class="w-6 h-6 text-[#007AC3] transition-transform duration-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h5M20 20v-5h-5M2.34 15.11A9 9 0 0111.77 3c4.2 0 7.84 2.87 8.93 6.79M19.66 8.89A9 9 0 0112.23 21c-4.2 0-7.84-2.87-8.93-6.79"></path>
-                    </svg>
-                </button>
-
-                <button onclick="location.reload()" class="p-3 bg-transparent border border-white/30 rounded-2xl text-white hover:bg-white/10 transition-all">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                    </svg>
+                <button onclick="handleAction('login')" 
+                        class="w-full bg-brand-red text-white py-5 rounded-2xl font-bold text-lg hover:brightness-110 active:scale-[0.98] transition-all shadow-xl shadow-red-200 mt-4">
+                    Iniciar Sesión
                 </button>
             </div>
 
-    <div class="px-6 -mt-12 relative z-20">
-        <div id="compliance-card" class="bg-white rounded-[32px] p-8 shadow-2xl shadow-slate-200 flex items-center gap-6 border border-slate-50">
-            <div id="compliance-ring" class="relative w-24 h-24 rounded-full flex items-center justify-center p-2">
-                <div class="bg-white w-full h-full rounded-full flex items-center justify-center shadow-inner">
-                    <span id="compliance-pct" class="text-2xl font-[900] text-slate-800 italic tracking-tighter">0%</span>
-                </div>
-            </div>
-            
-            <div class="flex-1 space-y-1">
-                <p id="compliance-label" class="text-lg font-black leading-tight uppercase">
-                    SIN CALIFICAR
-                </p>
-                <p class="text-xs text-slate-400 font-medium leading-tight italic">
-                    Nivel de cumplimiento reglamentario para el servicio.
+            <div class="mt-8 text-center">
+                <p class="text-slate-500 font-medium">
+                    ¿Eres nuevo? <button onclick="showView('view-register')" class="text-brand-red font-bold hover:underline">Crea tu cuenta</button>
                 </p>
             </div>
         </div>
-    </div>
 
-    <div class="px-8 mt-10 pb-10">
-        <div id="docs-list" class="space-y-4">
+        <!-- VISTA 2: REGISTRO (POR PASOS) -->
+        <div id="view-register" class="hidden flex-1 flex flex-col page-transition">
+            <div class="p-6 border-b border-slate-100 flex items-center gap-4">
+                <button onclick="showView('view-login')" class="p-2 hover:bg-slate-50 rounded-xl transition-colors">
+                    <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Registro de Tripulación</h2>
+                    <p class="text-xs text-slate-400 font-semibold uppercase tracking-tighter" id="reg-step-label">Paso 1 de 3</p>
+                </div>
             </div>
-    </div>
-</div>
 
-        <div id="loader" class="hidden fixed inset-0 bg-white/80 backdrop-blur-md flex flex-col items-center justify-center z-50">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 h-14 w-14 mb-4"></div>
-            <p id="loader-text" class="text-brand-red text-[10px] font-black tracking-widest uppercase animate-pulse">Cargando...</p>
+            <div class="flex-1 p-6 overflow-y-auto">
+                <!-- Paso 1: Validación -->
+                <div id="step-1" class="space-y-6">
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl">
+                        <p class="text-blue-700 text-sm font-medium leading-relaxed">
+                            <strong>Nota:</strong> Usaremos tu DNI para validar tus nombres automáticamente en nuestra base de datos.
+                        </p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="group">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block ml-1">Ingresa tu DNI</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="reg-dni" placeholder="DNI" 
+                                       class="flex-1 px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-brand-red">
+                                <button onclick="simulateDniCheck()" class="bg-slate-900 text-white px-6 rounded-2xl font-bold text-sm">Validar</button>
+                            </div>
+                        </div>
+                        <div id="dni-result" class="hidden animate-fade-in p-4 bg-green-50 rounded-2xl border border-green-100 flex items-center gap-3">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">✓</div>
+                            <p class="text-green-800 text-sm font-bold uppercase" id="detected-name">JUAN PÉREZ GARCÍA</p>
+                        </div>
+                    </div>
+                    <button id="btn-next-1" disabled onclick="goToStep(2)" class="w-full py-4 bg-slate-200 text-slate-400 rounded-2xl font-bold transition-all">Siguiente</button>
+                </div>
+
+                <!-- Paso 2: Perfil Laboral -->
+                <div id="step-2" class="hidden space-y-6">
+                    <div class="space-y-4">
+                        <div class="group">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block ml-1">Tu Cargo</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="selectCargo('CONDUCTOR')" id="btn-conductor" class="p-4 border-2 border-slate-100 rounded-2xl flex flex-col items-center gap-2 hover:border-red-200 transition-all bg-slate-50">
+                                    <span class="text-2xl">🚛</span>
+                                    <span class="font-bold text-xs uppercase">Conductor</span>
+                                </button>
+                                <button onclick="selectCargo('AUXILIAR')" id="btn-auxiliar" class="p-4 border-2 border-slate-100 rounded-2xl flex flex-col items-center gap-2 hover:border-red-200 transition-all bg-slate-50">
+                                    <span class="text-2xl">👷</span>
+                                    <span class="font-bold text-xs uppercase">Auxiliar</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="group">
+                            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block ml-1">Empresa</label>
+                            <select class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none">
+                                <option>Selecciona una opción</option>
+                                <option>Transportes Unidos S.A.</option>
+                                <option>Logística Nacional</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="goToStep(3)" class="w-full py-4 bg-brand-red text-white rounded-2xl font-bold shadow-lg shadow-red-100">Siguiente</button>
+                </div>
+
+                <!-- Paso 3: Documentación -->
+                <div id="step-3" class="hidden space-y-6">
+                    <div class="space-y-5">
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-sm font-bold text-slate-700 uppercase">Foto de DNI</h3>
+                                <span class="px-2 py-1 bg-red-100 text-brand-red text-[10px] font-black rounded">OBLIGATORIO</span>
+                            </div>
+                            <input type="file" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-red-50 file:text-brand-red hover:file:bg-red-100 cursor-pointer"/>
+                            <div class="mt-3">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Vencimiento</label>
+                                <input type="date" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm">
+                            </div>
+                        </div>
+
+                        <div id="field-licencia" class="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                            <h3 class="text-sm font-bold text-slate-700 uppercase mb-4">Licencia de Conducir</h3>
+                            <input type="file" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-red-50 file:text-brand-red hover:file:bg-red-100 cursor-pointer"/>
+                            <div class="mt-3">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Vencimiento</label>
+                                <input type="date" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="handleAction('register-complete')" class="w-full py-5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl">Finalizar Registro</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTA 3: DASHBOARD -->
+        <div id="view-dashboard" class="hidden flex-1 flex flex-col bg-[#F8FAFC] page-transition">
+            <!-- Header Mejorado -->
+            <div class="bg-brand-red p-8 pb-24 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20"></div>
+                <div class="relative z-10 flex justify-between items-start">
+                    <div>
+                        <p class="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">Tripulación Pro</p>
+                        <h2 id="user-name" class="text-3xl font-black text-white leading-none tracking-tight">JUAN PÉREZ</h2>
+                        <div class="mt-3 flex items-center gap-2">
+                            <span class="px-3 py-1 bg-white/10 rounded-lg text-[10px] font-black text-white uppercase backdrop-blur-md">CONDUCTOR</span>
+                            <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                            <span class="text-white/80 text-[10px] font-bold">ACTIVO</span>
+                        </div>
+                    </div>
+                    <!-- Botones de Acción -->
+                    <div class="flex gap-2">
+                        <button onclick="handleAction('refresh')" class="p-3 bg-white/10 rounded-2xl text-white hover:bg-white/20 transition-all border border-white/20">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        </button>
+                        <button onclick="location.reload()" class="p-3 bg-white/10 rounded-2xl text-white hover:bg-white/20 transition-all border border-white/20">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card de Cumplimiento (KPI) -->
+            <div class="px-6 -mt-16 relative z-20">
+                <div class="bg-white rounded-[2.5rem] p-6 shadow-2xl shadow-blue-900/10 border border-slate-50">
+                    <div class="flex items-center gap-6">
+                        <div class="relative flex items-center justify-center">
+                            <svg class="w-24 h-24 transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-100"/>
+                                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="62.8" class="text-brand-red stroke-round"/>
+                            </svg>
+                            <span class="absolute text-2xl font-black text-slate-800 tracking-tighter">75%</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Estatus Legal</p>
+                            <p class="text-xl font-black text-brand-red leading-tight">APTO CON OBSERVACIÓN</p>
+                            <p class="text-[10px] text-slate-400 font-medium mt-1">Tu licencia vence en 5 días.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-6 border-t border-slate-50 grid grid-cols-2 gap-4">
+                        <div class="bg-slate-50 p-3 rounded-2xl text-center">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Documentos</p>
+                            <p class="text-lg font-black text-slate-800">3 / 4</p>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-2xl text-center">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Empresa</p>
+                            <p class="text-xs font-black text-slate-800 truncate">TRANS. UNIDOS</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Documentos -->
+            <div class="flex-1 px-8 py-8 overflow-y-auto">
+                <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Mis Documentos</h3>
+                <div class="space-y-3">
+                    <div class="bg-white p-5 rounded-[1.5rem] flex items-center gap-4 border border-slate-100 shadow-sm">
+                        <div class="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center text-xl">🪪</div>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-bold text-slate-800 uppercase">Documento de Identidad</h4>
+                            <p class="text-[10px] text-green-600 font-bold uppercase">Validado ✓</p>
+                        </div>
+                        <button class="p-2 text-slate-300 hover:text-slate-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-[1.5rem] flex items-center gap-4 border border-red-100 shadow-sm ring-2 ring-red-50">
+                        <div class="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-xl">🛞</div>
+                        <div class="flex-1">
+                            <h4 class="text-sm font-bold text-slate-800 uppercase">Licencia de Conducir</h4>
+                            <p class="text-[10px] text-red-500 font-bold uppercase underline">Vence en 5 días</p>
+                        </div>
+                        <button class="px-3 py-1 bg-brand-red text-white text-[10px] font-bold rounded-lg shadow-lg shadow-red-100">RENOVAR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback: Loader Overlay -->
+        <div id="loader" class="hidden absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+            <div class="w-12 h-12 border-4 border-slate-100 border-t-brand-red rounded-full animate-spin mb-4"></div>
+            <p class="text-[10px] font-black text-slate-900 uppercase tracking-widest animate-pulse">Procesando solicitud</p>
+        </div>
+
+        <!-- Feedback: Toast Message -->
+        <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 w-[90%] max-w-[350px] bg-slate-900 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-3 transition-all opacity-0 translate-y-10 pointer-events-none z-[60]">
+            <div id="toast-icon" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">!</div>
+            <p id="toast-msg" class="text-xs font-bold uppercase"></p>
         </div>
 
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        function showView(viewId) {
+            document.querySelectorAll('#main-canvas > div').forEach(div => {
+                if(div.id !== 'loader' && div.id !== 'toast') div.classList.add('hidden');
+            });
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        function goToStep(stepNum) {
+            document.querySelectorAll('[id^="step-"]').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`step-${stepNum}`).classList.remove('hidden');
+            document.getElementById('reg-step-label').innerText = `Paso ${stepNum} de 3`;
+        }
+
+        function simulateDniCheck() {
+            showLoader(true);
+            setTimeout(() => {
+                showLoader(false);
+                document.getElementById('dni-result').classList.remove('hidden');
+                document.getElementById('btn-next-1').classList.replace('bg-slate-200', 'bg-brand-red');
+                document.getElementById('btn-next-1').classList.replace('text-slate-400', 'text-white');
+                document.getElementById('btn-next-1').disabled = false;
+                showToast("DNI Verificado con éxito", "success");
+            }, 1500);
+        }
+
+        function selectCargo(cargo) {
+            document.getElementById('btn-conductor').classList.remove('border-brand-red', 'bg-red-50', 'custom-ring');
+            document.getElementById('btn-auxiliar').classList.remove('border-brand-red', 'bg-red-50', 'custom-ring');
+            
+            const btnId = cargo === 'CONDUCTOR' ? 'btn-conductor' : 'btn-auxiliar';
+            document.getElementById(btnId).classList.add('border-brand-red', 'bg-red-50', 'custom-ring');
+            document.getElementById('field-licencia').style.display = cargo === 'CONDUCTOR' ? 'block' : 'none';
+        }
+
+        function showLoader(show) {
+            document.getElementById('loader').classList.toggle('hidden', !show);
+        }
+
+        function showToast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            document.getElementById('toast-msg').innerText = msg;
+            
+            icon.className = type === 'success' ? 'bg-green-500 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm' : 'bg-brand-red w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm';
+            
+            t.classList.remove('opacity-0', 'translate-y-10');
+            setTimeout(() => t.classList.add('opacity-0', 'translate-y-10'), 3000);
+        }
+
+        function handleAction(type) {
+            showLoader(true);
+            setTimeout(() => {
+                showLoader(false);
+                if(type === 'login' || type === 'register-complete') {
+                    showView('view-dashboard');
+                } else if(type === 'refresh') {
+                    showToast("Datos actualizados", "success");
+                }
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
